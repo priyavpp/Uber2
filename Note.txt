@@ -1,0 +1,15 @@
+Classes:
+
+simulator: demand, simulate time, 
+
+driver:  number constant, Number depends on(surge, demand), money time, empty time, money earned, 
+	Decide_Go_on_road(surge, demand, onroad_driver)
+	Decide_rest()
+
+passagenger:  geo location, Accept: price(weight), waiting time(weight)
+			  Decide_Accept(distance, Uber-price, waiting_time, Uber_preference_rate)
+
+
+
+Data:
+Atlanta traffic demand, passager demand data
