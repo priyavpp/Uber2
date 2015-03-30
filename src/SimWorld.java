@@ -81,12 +81,14 @@ public class SimWorld implements SimEventHandler {
 	
 	// passenger requests to ride uber
 	// schedules a drop off event at +t time
-	public void request(int did, int pid, double eta) {
-		scheduler.scheduleEvent(currentTime+eta, "drop_off", new ArrayList<String>(Arrays.asList(pid+""+did+""+eta)));
+	public void request(int did, int pid, double eta, double X, double Y) {
+		did=dispatcher.find_nearest_driver(double X, double Y);
+		scheduler.scheduleEvent(currentTime+eta, "drop_off", new ArrayList<String>(Arrays.asList(pid+""+did+""+eta+""+X+""+Y+"")));
 	}
 
-	public void drop_off(int did) {
+	public void drop_off(int did, double X, double Y) {
 		demands--;
+		dispatcher.update_driver_position(did, X, Y);
 		
 		// driver moves to an new location and becomes free to take new
 		// passengers
@@ -121,14 +123,18 @@ public class SimWorld implements SimEventHandler {
 			int pid = Integer.parseInt(data.get(0));
 			int did=Integer.parseInt(data.get(1));
 			double eta=Double.parseDouble(data.get(2));
-			drop_off(did);
+			double Des_X=Double.parseDouble(data.get(3));
+			double Des_Y=Double.parseDouble(data.get(4));
+			drop_off(did,Des_X, Des_Y);
 		}
 
 		if (s.equals("request")) {
 			int did = Integer.parseInt(data.get(0));
 			int pid = Integer.parseInt(data.get(1));
 			double eta=Double.parseDouble(data.get(2));
-			request(did, pid, eta);
+			double Des_X=Double.parseDouble(data.get(3));
+			double Des_Y=Double.parseDouble(data.get(4));
+			request(did, pid, eta,Des_X, Des_Y);
 		}
 		if (s.equals("driver_check")) {
 			driver_check();

@@ -6,15 +6,15 @@ import java.util.HashMap;
  */
 public class Dispatcher {
     class Coordinate{
-        private final int x;
-        private final int y;
+        private final double x;
+        private final double y;
 
         Coordinate(){
             x = 0;
             y = 0;
         }
 
-        Coordinate(int x, int y){
+        Coordinate(double x, double y){
             this.x= x;
             this.y= y;
         }
@@ -29,9 +29,9 @@ public class Dispatcher {
 
         @Override
         public int hashCode() {
-            int result = x;
+            double result = x;
             result = 31 * result + y;
-            return result;
+            return (int) result;
         }
     }
 
@@ -82,8 +82,13 @@ public class Dispatcher {
         surge_price=new_price;
     }
 
+    public int find_nearest_driver(double X, double Y){
+    	int driver_id=1;
+    	return driver_id;
+    }
     
-    public void update_driver_position(int id,int newX,int newY){
+    
+    public void update_driver_position(int id,double newX,double newY){
 
         Coordinate coords = driverPostion.get(id);
         mapDetail.get(coords).drivers.remove(id);

@@ -6,6 +6,8 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 public class Passenger {
 	private double altitude;
 	private double latitude;
+	private double Des_altitude;
+	private double Des_latitude;
 	private double travelTime;
 	private double travelDistance;
 	private double maximumWaitingTime;
@@ -23,6 +25,9 @@ public class Passenger {
 		double[] geo= Helper.initGeoLocation();
 		altitude=geo[0];
 		latitude=geo[1];
+		double[] Des_geo=Helper.initGeoLocation();
+		Des_altitude=Des_geo[0];
+		Des_latitude=Des_geo[1];
 		travelTime=0;
 		travelDistance=new ExponentialDistribution(7).sample();      // average travel 7 miles
 		maximumWaitingTime=new ExponentialDistribution(3).sample();   //average like to wait for 3 minutes
