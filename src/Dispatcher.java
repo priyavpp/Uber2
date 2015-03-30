@@ -5,7 +5,7 @@ import java.util.HashMap;
  * Created by linahu on 3/28/15.
  */
 public class Dispatcher {
-    class Coordinate{
+     class Coordinate{
         private final double x;
         private final double y;
 

@@ -4,7 +4,6 @@ import java.util.Random;
 public class Driver {
     private int id;
 	private double minimumSurge;
-	private int demand;
 	private int servingTime;
 	private int idleTime;
 	private double moneyEarned;
