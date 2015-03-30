@@ -16,7 +16,7 @@ public class Passenger {
 	private int id;
 	private boolean takeUber;
 	Dispatcher dispatcher;
-    PassengerLogic logic;
+
 
 
 	

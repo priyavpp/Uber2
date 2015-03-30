@@ -13,7 +13,7 @@ public class Driver {
     private double altitude;
     private double latitude;
     Dispatcher dispatcher;
-    DriverLogic logic;
+
 	
 	public Driver(Dispatcher dispatcher){
 		onService=false;
@@ -22,7 +22,6 @@ public class Driver {
 		moneyEarned=0;
 		Random rm= new Random();
 		minimumSurge=rm.nextDouble()*3;
-        logic = new DriverLogic();
         this.dispatcher=dispatcher;
         double[] geo=Helper.initGeoLocation();
         altitude=geo[0];

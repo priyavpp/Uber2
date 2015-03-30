@@ -17,8 +17,6 @@ public class SimWorld implements SimEventHandler {
 	Passenger[] passengers;
 	int demands;
 	Dispatcher dispatcher;
-	PassengerLogic plogic;
-	DriverLogic dlogic;
 	double currentTime;
 	int passenger_interval;
 	double totalMoney;
@@ -27,8 +25,8 @@ public class SimWorld implements SimEventHandler {
 		active_Driver_Number = 1;
 		demands = 0;
 		totalMoney=0;
-		plogic = new PassengerLogic();
-		dlogic = new DriverLogic();
+//		plogic = new PassengerLogic();
+//		dlogic = new DriverLogic();
 
 		// generate drivers
 		drivers = new Driver[n_drivers];

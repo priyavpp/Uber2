@@ -52,7 +52,12 @@ public class Helper {
     	return false;
     }
 	
-	
+    public static boolean TakeUber(int travelDistance, double UberPrice, int waitingTime, int Uber_preference_rate ){
+        if(Uber_preference_rate>100){   //need to be implemented
+            return true;
+        }
+        return false;
+    }
 	
 	
 }
