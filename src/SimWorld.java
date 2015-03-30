@@ -82,7 +82,7 @@ public class SimWorld implements SimEventHandler {
 	// passenger requests to ride uber
 	// schedules a drop off event at +t time
 	public void request(int did, int pid, double eta, double X, double Y) {
-		did=dispatcher.find_nearest_driver(double X, double Y);
+		did=dispatcher.find_nearest_driver(X, Y);
 		scheduler.scheduleEvent(currentTime+eta, "drop_off", new ArrayList<String>(Arrays.asList(pid+""+did+""+eta+""+X+""+Y+"")));
 	}
 
@@ -94,12 +94,12 @@ public class SimWorld implements SimEventHandler {
 		// passengers
 	}
 
-	public void driver_check() {
-		// all the drivers, except for those who taking a passanger, will
-		// periodically check to make certain decisions
-		// active drivers will decide whether they should take a rest.
-		// inactive drivers will decide whether they should go on road
-	}
+//	public void driver_check() {
+//		// all the drivers, except for those who taking a passanger, will
+//		// periodically check to make certain decisions
+//		// active drivers will decide whether they should take a rest.
+//		// inactive drivers will decide whether they should go on road
+//	}
 
 	@Override
 	public void executeEvent(SimEvent e) {
@@ -136,9 +136,9 @@ public class SimWorld implements SimEventHandler {
 			double Des_Y=Double.parseDouble(data.get(4));
 			request(did, pid, eta,Des_X, Des_Y);
 		}
-		if (s.equals("driver_check")) {
-			driver_check();
-		}
+//		if (s.equals("driver_check")) {
+//			driver_check();
+//		}
 
 	}
 
