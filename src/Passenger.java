@@ -1,6 +1,6 @@
 import java.util.Random;
 
-import org.apache.commons.math3.distribution.ExponentialDistribution;
+//import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 
 
@@ -28,8 +28,8 @@ public class Passenger {
 		Des_altitude=Des_geo[0];
 		Des_latitude=Des_geo[1];
 		travelDistance=Math.sqrt((altitude-Des_altitude)*(altitude-Des_altitude)+(latitude-Des_latitude)*(latitude-Des_latitude));     // average travel 7 miles
-		maximumWaitingTime=new ExponentialDistribution(3).sample();   //average like to wait for 3 minutes
-		maximumPrice=new ExponentialDistribution(20).sample();  // need to be changed later, follow by normal distribution?
+		//maximumWaitingTime=new ExponentialDistribution(3).sample();   //average like to wait for 3 minutes
+		//maximumPrice=new ExponentialDistribution(20).sample();  // need to be changed later, follow by normal distribution?
 		Uber_preference=(int) (Math.random()*100);  // need to be changed later
 		this.id=pid;
         this.dispatcher=dispatcher;

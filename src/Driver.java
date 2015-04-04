@@ -14,7 +14,8 @@ public class Driver {
     Dispatcher dispatcher;
 
 	
-	public Driver(Dispatcher dispatcher){
+	public Driver(int did, Dispatcher dispatcher){
+        id = did;
 		onService=false;
 		servingTime=0;
 		idleTime=0;
@@ -25,6 +26,8 @@ public class Driver {
         double[] geo=Helper.initGeoLocation();
         altitude=geo[0];
         latitude=geo[1];
+        dispatcher.add_driver(id,0,0);
+
 	}
 
     public boolean isActive(){

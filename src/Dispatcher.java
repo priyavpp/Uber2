@@ -69,6 +69,11 @@ public class Dispatcher {
         surge_price = 1.0;
     }
 
+    public void add_driver(int did, int x, int y){
+        driverPostion.put(did,new Coordinate(x,y));
+        mapDetail.get(new Coordinate(x,y)).drivers.add(did);
+    }
+
     public void initialize_map(int n){
         for (int i = 0; i<n; i++){
             for (int j = 0; j <n; j++){
