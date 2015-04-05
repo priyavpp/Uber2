@@ -8,18 +8,18 @@ public class RandomNumber {
     double mu;
     double sigma;
 
-    RandomNumber(long seed){
+    public RandomNumber(long seed){
         this.seed = seed;
         this.RNG = new Random(seed);
     }
 
-    RandomNumber(long seed, double mu){
+    public RandomNumber(long seed, double mu){
         this.seed = seed;
         this.RNG = new Random(seed);
         this.mu = mu;
     }
 
-    RandomNumber(long seed, double mu, double sigma){
+    public RandomNumber(long seed, double mu, double sigma){
         this.seed = seed;
         this.RNG = new Random(seed);
         this.mu = mu;
@@ -43,6 +43,12 @@ public class RandomNumber {
         }else{
             return nextNormal();
         }
+    }
+
+    public int[] nextCoordinate(){
+        int x = (int) (RNG.nextDouble()*mu);
+        int y = (int) (RNG.nextDouble()*mu);
+        return new int[]{x, y};
     }
 
 

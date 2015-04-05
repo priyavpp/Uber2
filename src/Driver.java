@@ -1,34 +1,37 @@
+import logic.DriverLogic;
+import simulation.RandomNumber;
+
 import java.util.Random;
 
 
 public class Driver {
     private int id;
-	private double minimumSurge;
-	private int servingTime;
-	private int idleTime;
-	private double moneyEarned;
+	//private double minimumSurge;
+
 	private boolean onService;
     private boolean active;
-    private double altitude;
-    private double latitude;
+    private double hours_working;
+    private double idleTime;
+    private double revenue;
+
     Dispatcher dispatcher;
+    double rest_preference; //driver's preference to work
+    DriverLogic logic;
 
 	
-	public Driver(int did, Dispatcher dispatcher){
+	public Driver(int did, Dispatcher dispatcher, DriverLogic logic){
         id = did;
 		onService=false;
-		servingTime=0;
 		idleTime=0;
-		moneyEarned=0;
-		Random rm= new Random();
-		minimumSurge=rm.nextDouble()*3;
         this.dispatcher=dispatcher;
-        double[] geo=Helper.initGeoLocation();
-        altitude=geo[0];
-        latitude=geo[1];
-        dispatcher.add_driver(id,0,0);
+        dispatcher.add_driver(id,-1,-1);
+        hours_working=0;
+        revenue=0;
+        this.logic=logic;
 
 	}
+
+    public boolean isOnService(){return onService;}
 
     public boolean isActive(){
         return active;
@@ -40,17 +43,34 @@ public class Driver {
         dispatcher.update_driver_position(id,0,0);
     }
 
-    public void become_active(int x,int y){
+    public void become_active(RandomNumber generator){
         active = true;
-        dispatcher.update_driver_position(id,x,y);
+        int[] coords = generator.nextCoordinate();
+        dispatcher.update_driver_position(id,coords[0],coords[1]);
     }
 
+    public void on_service(){
+        onService=true;
+        // to be implemented: randomly assign a position to driver.
+        dispatcher.remove_driver(id);
+    }
 
     public void become_inactive(){
         active = false;
         // to be implemented: randomly assign a position to driver.
         dispatcher.remove_driver(id);
     }
+
+    public boolean decide_work(){
+        double revenue_estimate = dispatcher.getRevenueEstimate();
+        return logic.decideWork(revenue_estimate);
+    }
+
+    public boolean decide_rest(){
+        return logic.decideRest(hours_working,rest_preference,revenue);
+    }
+
+
 
 	
 }

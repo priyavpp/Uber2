@@ -1,3 +1,8 @@
+import logic.PassengerLogic;
+import simulation.RandomNumber;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 //import org.apache.commons.math3.distribution.ExponentialDistribution;
@@ -5,35 +10,56 @@ import java.util.Random;
 
 
 public class Passenger {
-	private double altitude;
-	private double latitude;
-	private double Des_altitude;
-	private double Des_latitude;
+	//private double altitude;
+	//private double latitude;
+	//private double Des_altitude;
+	//private double Des_latitude;
+    private int[] start_coords;
+    private int[] end_coords;
 	private double travelDistance;
-	private double maximumWaitingTime;
-	private double maximumPrice;
+	private double wait_preference;
+	private double cost_preference;
 	private int Uber_preference;
 	private int id;
-	Dispatcher dispatcher;//Not necessary
+    private static RandomNumber passengerGenerator;
+    private static RandomNumber distanceGenerator;
+	Dispatcher dispatcher;
+    PassengerLogic logic;
 
 
 
+	public static void setGenerator(RandomNumber pgenerator,RandomNumber dgenerator){
+        passengerGenerator = pgenerator;
+        distanceGenerator = dgenerator;
+    }
+
+    public int[] getDestination(){
+        return end_coords;
+    }
 	
-	
-	public Passenger(Dispatcher dispatcher, int pid){
-		double[] geo= Helper.initGeoLocation();
-		altitude=geo[0];
-		latitude=geo[1];
-		double[] Des_geo=Helper.initGeoLocation();
-		Des_altitude=Des_geo[0];
-		Des_latitude=Des_geo[1];
-		travelDistance=Math.sqrt((altitude-Des_altitude)*(altitude-Des_altitude)+(latitude-Des_latitude)*(latitude-Des_latitude));     // average travel 7 miles
+	public Passenger(int pid,Dispatcher dispatcher, PassengerLogic logic){
+        start_coords = passengerGenerator.nextCoordinate();
+        int[] distance=distanceGenerator.nextCoordinate();
+        end_coords = new int[2];
+        end_coords[0]=start_coords[0]+distance[0];
+        end_coords[1]=start_coords[1]+distance[1];
+
+		travelDistance=(Math.abs(distance[0])+Math.abs(distance[1]))*0.5;     // average travel 7 miles
 		//maximumWaitingTime=new ExponentialDistribution(3).sample();   //average like to wait for 3 minutes
 		//maximumPrice=new ExponentialDistribution(20).sample();  // need to be changed later, follow by normal distribution?
+        wait_preference=logic.genWaitPreference();
+        cost_preference=logic.genCostPreference();
 		Uber_preference=(int) (Math.random()*100);  // need to be changed later
 		this.id=pid;
         this.dispatcher=dispatcher;
+        dispatcher.add_passenger(pid,start_coords[0],start_coords[1]);
+        this.logic=logic;
 	}
+
+    public boolean decide_uber(double cost,double wait){
+        return logic.decideUber(cost_preference,wait_preference,travelDistance,cost,wait);
+    }
+
 	
 	public int getID(){
 		return this.id;
@@ -42,13 +68,7 @@ public class Passenger {
 	public double getTravelDistance(){
 		return this.travelDistance;
 	}
-	
-	public double getMaximumWaitingTime(){
-		return this.maximumWaitingTime;
-	}
-	public double getMaximumPrice(){
-		return this.maximumPrice;
-	}
+
 	public int getPerference(){
 		return this.Uber_preference;
 	}
