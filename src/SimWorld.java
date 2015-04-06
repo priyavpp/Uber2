@@ -86,7 +86,8 @@ public class SimWorld implements SimEventHandler {
 		Passenger newPassenger = new Passenger(pid,dispatcher,plogic);
         passengers[pid]=newPassenger;
         scheduler.scheduleEvent(currentTime+0.1,"query",new ArrayList<String>(Arrays.asList(pid+"")));
-		scheduler.scheduleEvent(currentTime+Math.round(interarrival.nextDouble()), "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));System.out.println("time " + currentTime + ": arrival of passenger " + pid);
+		scheduler.scheduleEvent(currentTime+Math.round(interarrival.nextDouble()), "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
+		System.out.println("time " + currentTime + ": arrival of passenger " + pid);
 	}
 
 
@@ -115,7 +116,7 @@ public class SimWorld implements SimEventHandler {
 	// schedules a drop off event at +t time
 	public void request(int pid) {
         double currentTime=scheduler.getTime();
-        int did = dispatcher.get_driver(pid);
+        int did = dispatcher.assign_driver(pid);
         drivers[did].on_service();
         Passenger p=passengers[pid];
 		scheduler.scheduleEvent(currentTime+p.getTravelDistance()/30*60, "drop_off", new ArrayList<String>(Arrays.asList(pid+"",did+"")));

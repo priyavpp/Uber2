@@ -10,10 +10,6 @@ import java.util.Random;
 
 
 public class Passenger {
-	//private double altitude;
-	//private double latitude;
-	//private double Des_altitude;
-	//private double Des_latitude;
     private int[] start_coords;
     private int[] end_coords;
 	private double travelDistance;

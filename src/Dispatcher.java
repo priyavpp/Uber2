@@ -91,10 +91,12 @@ public class Dispatcher {
         mapDetail.put(new Coordinate(-1,-1),gd);
     }
 
-    public void reset_surge_price(double new_price){
-        surge_price=new_price;
+    public void reset_surge_price(double surge){
+        surge_price=surge;
     }
 
+
+    // need to be modified
     public double getRevenueEstimate(){
         return surge_price*100;
     }
@@ -157,7 +159,7 @@ public class Dispatcher {
         return -1;
     }
 
-    public int get_driver(int pid){
+    public int assign_driver(int pid){
         int did= driverCandidate.get(pid);
         driverCandidate.remove(pid);
         return did;
