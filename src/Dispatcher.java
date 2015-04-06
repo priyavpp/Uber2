@@ -1,20 +1,21 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Queue;
 
 /**
  * Created by linahu on 3/28/15.
  */
 public class Dispatcher {
      class Coordinate{
-        private final double x;
-        private final double y;
+        private final int x;
+        private final int y;
 
         Coordinate(){
             x = 0;
             y = 0;
         }
 
-        Coordinate(double x, double y){
+        Coordinate(int x, int y){
             this.x= x;
             this.y= y;
         }
@@ -60,6 +61,7 @@ public class Dispatcher {
     private HashMap<Coordinate,GridDetail> mapDetail;
 
     private double surge_price;
+    private int n_grid;
 
     Dispatcher(){
         passengerPostion=new HashMap<Integer, Coordinate>();
@@ -84,6 +86,7 @@ public class Dispatcher {
                 mapDetail.put(new Coordinate(i,j),gd);
             }
         }
+        n_grid=n;
         GridDetail gd = new GridDetail(new Coordinate(-1,-1));
         mapDetail.put(new Coordinate(-1,-1),gd);
     }
@@ -97,7 +100,7 @@ public class Dispatcher {
     }
 
     
-    public void update_driver_position(int id,double newX,double newY){
+    public void update_driver_position(int id,int newX,int newY){
 
         Coordinate coords = driverPostion.get(id);
         mapDetail.get(coords).drivers.remove(new Integer(id));
@@ -108,22 +111,50 @@ public class Dispatcher {
     //remove inactive driver from the map
     public void remove_driver(int id){
         Coordinate coords = driverPostion.get(id);
-        mapDetail.get(coords).drivers.remove(id);
+        mapDetail.get(coords).drivers.remove(new Integer(id));
         driverPostion.put(id,new Coordinate(-1,-1));
     }
 
     // find the nearest driver, update driver candidates and return eta
     // not finish calculation for eta yet
 	public double get_eta(int pid){
+        int[] dx ={0,0,-1,1};
+        int[] dy = {1,-1,0,0};
+        boolean[][] visited = new boolean[n_grid][n_grid];
+
 		Coordinate coordinate=passengerPostion.get(pid);
         GridDetail current_grid = mapDetail.get(new Coordinate(coordinate.x,coordinate.y));
-        if (current_grid.drivers.size()>0){
-            driverCandidate.put(pid,current_grid.drivers.get(0));
-            return 1.0;
-        } 
+
         // use bfs to find the nearest driver
-        // to be implemented
-        return 3.0;
+        ArrayList<GridDetail> queue = new ArrayList<GridDetail>();
+        double wait =0.5;
+        queue.add(current_grid);
+        visited[coordinate.x][coordinate.y]=true;
+
+        while (!queue.isEmpty()){
+            GridDetail g = queue.remove(0);
+            coordinate=g.coords;
+          //  System.out.println(g.coords.x+" "+g.coords.y);
+
+            if (g.drivers.size()>0){
+                System.out.println("Assigned driver "+g.drivers.get(0)+" to passenger "+pid);
+                driverCandidate.put(pid, g.drivers.get(0));
+                return wait;
+            } else{
+                wait++;
+                for(int i = 0;i<4;i++){
+                    int newX = coordinate.x+dx[i];
+                    int newY = coordinate.y+dy[i];
+                    if (newX>=0 && newX<n_grid&&newY>=0 && newY<n_grid && !visited[newX][newY]){
+                        visited[newX][newY]=true;
+                        queue.add(mapDetail.get(new Coordinate(newX,newY)));
+                    }
+                }
+
+            }
+        }
+
+        return -1;
     }
 
     public int get_driver(int pid){

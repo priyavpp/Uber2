@@ -47,6 +47,7 @@ public class Driver {
         active = true;
         int[] coords = generator.nextCoordinate();
         dispatcher.update_driver_position(id,coords[0],coords[1]);
+        System.out.println("Driver "+id+" added on ("+coords[0]+", "+coords[1]+")");
     }
 
     public void on_service(){

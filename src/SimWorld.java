@@ -7,7 +7,15 @@ import simulation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+
+
+/*===============Todo:====================
+1. Need to modify distance generator. Now all the trips are very short.
+2. Each driver should record their total revenue and revenue in last 30 mins.
+3. Each driver should record their hours_working;
+4. Need to validate driver_check() function.
+5. change the setup in driver and passenger logic so that passengers and drivers can make different decisions.
+ */
 
 public class SimWorld implements SimEventHandler {
 	// class variables: dispatcher and list of drivers and passengers
@@ -42,7 +50,7 @@ public class SimWorld implements SimEventHandler {
 
         mapGenerator = new RandomNumber(123,n_grid);
         interarrival = new RandomNumber(123,10);
-        distanceGenerator = new RandomNumber(123,n_grid/2);
+        distanceGenerator = new RandomNumber(123,n_grid/4);
 
         dispatcher = new Dispatcher();
         dispatcher.initialize_map(n_grid);
@@ -52,12 +60,6 @@ public class SimWorld implements SimEventHandler {
 		for (int i = 0; i < n_drivers; i++) {
             drivers[i] = new Driver(i, dispatcher, dlogic);
         }
-
-		// drivers decide whether to be active or not
-		//for (int i = 0; i < n_drivers; i++)
-         //   if (drivers[i].decide_work()){
-          //      drivers[i].become_active(mapGenerator);
-          //  }
 
         Passenger.setGenerator(mapGenerator,distanceGenerator);
 
@@ -70,7 +72,7 @@ public class SimWorld implements SimEventHandler {
 
 		// schedule initial events
 		// to be implemented
-		scheduler.scheduleEvent(0, "arrival", new
+		scheduler.scheduleEvent(0.1, "arrival", new
 		 ArrayList<String>(Arrays.asList(0 + "")));
         scheduler.scheduleEvent(0, "driver_check", new ArrayList<String>());
 
@@ -84,21 +86,28 @@ public class SimWorld implements SimEventHandler {
 		Passenger newPassenger = new Passenger(pid,dispatcher,plogic);
         passengers[pid]=newPassenger;
         scheduler.scheduleEvent(currentTime+0.1,"query",new ArrayList<String>(Arrays.asList(pid+"")));
-		scheduler.scheduleEvent(currentTime+interarrival.nextDouble(), "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));System.out.println("time " + currentTime + ": arrival of passenger " + pid);
+		scheduler.scheduleEvent(currentTime+Math.round(interarrival.nextDouble()), "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));System.out.println("time " + currentTime + ": arrival of passenger " + pid);
 	}
 
 
 	public void query(int pid) {
 		// passenger query the dispatcher for eta and price
 		// if passenger decides to take the uber, will schedule a request event
+
         double currentTime=scheduler.getTime();
+        System.out.println("time "+ currentTime+": passenger "+pid+" made a query");
         Passenger p = passengers[pid];
 		double cost=dispatcher.get_price(p);
-		double eta=dispatcher.get_eta(pid);
+        if (cost==-1){
+            System.out.println("No Driver available.");
+            return;
+        }
+        double eta=dispatcher.get_eta(pid);
         if (p.decide_uber(cost,eta)) {
 			scheduler.scheduleEvent(currentTime+0.5,"request" , new ArrayList<String>(Arrays.asList(pid+"")));
-		}
-        System.out.println("time "+ currentTime+": passenger "+pid+" made a query");
+            System.out.println("Passenger "+pid+" decided to take uber");
+		}else {System.out.println("Passenger "+pid+" decided not to take uber");}
+
 	}
 
 	
@@ -110,9 +119,12 @@ public class SimWorld implements SimEventHandler {
         drivers[did].on_service();
         Passenger p=passengers[pid];
 		scheduler.scheduleEvent(currentTime+p.getTravelDistance()/30*60, "drop_off", new ArrayList<String>(Arrays.asList(pid+"",did+"")));
+        System.out.println("time "+ currentTime+": passenger "+pid+" requested a car");
 	}
 
 	public void drop_off(int pid,int did) {
+        double currentTime=scheduler.getTime();
+        System.out.println("time "+ currentTime+": passenger "+pid+" was dropped off.");
         Passenger p = passengers[pid];
         int[] coords = p.getDestination();
 		dispatcher.update_driver_position(did, coords[0], coords[1]);
@@ -134,6 +146,7 @@ public class SimWorld implements SimEventHandler {
                 if (d.decide_rest()) d.become_inactive();
             if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator);
         }
+
         scheduler.scheduleEvent(currentTime+10,"driver_check",new ArrayList<String>());
 	}
 
