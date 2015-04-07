@@ -15,7 +15,7 @@ import java.util.Random;
 public class Passenger {
     private int[] start_coords;
     private int[] end_coords;
-	private double travelDistance;
+	private int travelDistance;
 	private double wait_preference;
 	private double cost_preference;
 	private int Uber_preference;
@@ -41,9 +41,9 @@ public class Passenger {
 	public Passenger(int pid,Dispatcher dispatcher, PassengerLogic logic){
         start_coords = passengerGenerator.nextCoordinate();
         end_coords = new int[2];
-        travelDistance=distanceGenerator.nextExp(average_traval_distance);
-        end_coords=distanceGenerator.nextEndCoord(average_traval_distance,travelDistance);
-          
+        travelDistance=(int)distanceGenerator.nextExp(average_traval_distance);
+        int[] end_coords=distanceGenerator.nextEndCoord(average_traval_distance,travelDistance, start_coords);
+
         // int[] distance=distanceGenerator.nextCoordinate();
         // end_coords[0]=start_coords[0]+distance[0];
         // end_coords[1]=start_coords[1]+distance[1];
@@ -70,18 +70,12 @@ public class Passenger {
     public boolean decide_uber(double cost,double wait){
         return logic.decideUber(cost_preference,wait_preference,travelDistance,cost,wait);
     }
-	
-	public int getID(){
-		return this.id;
-	}
+
 
 	public double getTravelDistance(){
 		return this.travelDistance;
 	}
 
-	public int getPerference(){
-		return this.Uber_preference;
-	}
 
     public double getCost(){
         return this.cost;

@@ -1,5 +1,6 @@
+import java.math.RoundingMode;
 import java.util.Random;
-
+import java.math.BigDecimal;
 
 public class Helper {
 	public static double[] initGeoLocation(){
@@ -9,8 +10,13 @@ public class Helper {
 		geo[0]=rn.nextDouble()*100;
 		return geo;
 	}
-  
-    public static void updateDriverStatus(int demands, int driver_numbers){
-    	// not implement yet
-    }	
+
+
+	public static double round(double value, int places) {
+		if (places < 0) throw new IllegalArgumentException();
+
+		BigDecimal bd = new BigDecimal(value);
+		bd = bd.setScale(places, RoundingMode.HALF_UP);
+		return bd.doubleValue();
+	}
 }

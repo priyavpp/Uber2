@@ -89,8 +89,8 @@ public class SimWorld implements SimEventHandler {
 		Passenger newPassenger = new Passenger(pid,dispatcher,plogic);
         passengers[pid]=newPassenger;
         scheduler.scheduleEvent(currentTime+0.1,"query",new ArrayList<String>(Arrays.asList(pid+"")));
-		scheduler.scheduleEvent(currentTime+Math.round(interarrival.nextDouble()), "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
-		System.out.println("time " + currentTime + ": arrival of passenger " + pid);
+		scheduler.scheduleEvent(currentTime+(interarrival.nextDouble()), "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
+		System.out.println("time " + Helper.round(currentTime,1) + ": arrival of passenger " + pid);
 	}
 
 
@@ -99,7 +99,7 @@ public class SimWorld implements SimEventHandler {
 		// if passenger decides to take the uber, will schedule a request event
 
         double currentTime=scheduler.getTime();
-        System.out.println("time "+ currentTime+": passenger "+pid+" made a query");
+        System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" made a query");
         Passenger p = passengers[pid];
 		double cost=dispatcher.get_price(p);
         if (cost==-1){
@@ -125,12 +125,12 @@ public class SimWorld implements SimEventHandler {
         drivers[did].on_service();
         Passenger p=passengers[pid];
 		scheduler.scheduleEvent(currentTime+p.getTravelDistance()/30*60, "drop_off", new ArrayList<String>(Arrays.asList(pid+"",did+"")));
-        System.out.println("time "+ currentTime+": passenger "+pid+" requested a car");
+        System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" requested a car");
 	}
 
 	public void drop_off(int pid,int did) {
         double currentTime=scheduler.getTime();
-        System.out.println("time "+ currentTime+": passenger "+pid+" was dropped off.");
+        System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" was dropped off.");
         Passenger p = passengers[pid];
 		p.setDropOffTime(currentTime);
         int[] coords = p.getDestination();
@@ -204,7 +204,7 @@ public class SimWorld implements SimEventHandler {
 		// main program
 		//int max_time = Integer.parseInt(args[0]);
         SimWorld sim = new SimWorld(); // create new simulation
-        int max_time=10;
+        int max_time=100;
 		sim.initialize(10, 1000, max_time);
 		sim.runSimulation(max_time);
 	}

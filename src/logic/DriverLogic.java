@@ -52,10 +52,7 @@ public class DriverLogic extends Logic {
     public boolean decideRest(double hours_working, double rest_preference,double revenue){
         updateAlternative("work", new ArrayList<Double>(Arrays.asList(revenue)));
         updateAlternative("rest", new ArrayList<Double>(Arrays.asList(hours_working,rest_preference)));
-        if (hours_working>4 || revenue/rest_preference>1000) {
-            return decide("rest");
-        }
-        return decide("work");
+        return decide("rest");
     }
 
 }
