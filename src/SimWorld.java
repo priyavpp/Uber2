@@ -39,6 +39,9 @@ public class SimWorld implements SimEventHandler {
     RandomNumber distanceGenerator;
     int n_grid;
 
+
+
+
 	public void initialize(int n_drivers, int max_passenger,int n_grid) {
 		totalRevenue=0;
         n_passengers = 0;
@@ -105,6 +108,8 @@ public class SimWorld implements SimEventHandler {
         }
         double eta=dispatcher.get_eta(pid);
         if (p.decide_uber(cost,eta)) {
+        	p.setCost(cost);
+			p.setArrivalTime(currentTime+eta);
 			scheduler.scheduleEvent(currentTime+0.5,"request" , new ArrayList<String>(Arrays.asList(pid+"")));
             System.out.println("Passenger "+pid+" decided to take uber");
 		}else {System.out.println("Passenger "+pid+" decided not to take uber");}
@@ -127,7 +132,12 @@ public class SimWorld implements SimEventHandler {
         double currentTime=scheduler.getTime();
         System.out.println("time "+ currentTime+": passenger "+pid+" was dropped off.");
         Passenger p = passengers[pid];
+		p.setDropOffTime(currentTime);
         int[] coords = p.getDestination();
+        Driver d= drivers[did];
+		d.setHours_working(p.getDropOffTime()-p.getArrivalTime());
+        d.setRevenue(p.getCost());
+        totalRevenue+=p.getCost();
 		dispatcher.update_driver_position(did, coords[0], coords[1]);
 		
 		// driver moves to an new location and becomes free to take new
@@ -175,8 +185,13 @@ public class SimWorld implements SimEventHandler {
 			int pid = Integer.parseInt(data.get(0));
 			request(pid);
 		}
+
 		if (s.equals("driver_check")) {
 			driver_check();
+		}
+		
+		if (s.equals("save_status")) {
+			
 		}
 
 	}

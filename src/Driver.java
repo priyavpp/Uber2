@@ -71,7 +71,20 @@ public class Driver {
         return logic.decideRest(hours_working,rest_preference,revenue);
     }
 
+    public void setRevenue(double revenue){
+        this.revenue+=revenue;
+    }    
 
+    public double getRevenue(){
+        return this.revenue;
+    }
 
+    public void  setHours_working(double time){
+        this.hours_working+=time;
+    }
+
+    public double getHours_working(){
+        return this.hours_working;
+    }
 	
 }

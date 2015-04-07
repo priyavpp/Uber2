@@ -21,8 +21,10 @@ public class Passenger {
     private static RandomNumber distanceGenerator;
 	Dispatcher dispatcher;
     PassengerLogic logic;
-
-
+    private double average_traval_distance=7;
+    private double cost;
+    private double arriveTime;
+    private double dropOffTime;
 
 	public static void setGenerator(RandomNumber pgenerator,RandomNumber dgenerator){
         passengerGenerator = pgenerator;
@@ -35,18 +37,25 @@ public class Passenger {
 	
 	public Passenger(int pid,Dispatcher dispatcher, PassengerLogic logic){
         start_coords = passengerGenerator.nextCoordinate();
-        int[] distance=distanceGenerator.nextCoordinate();
         end_coords = new int[2];
-        end_coords[0]=start_coords[0]+distance[0];
-        end_coords[1]=start_coords[1]+distance[1];
-
-		travelDistance=(Math.abs(distance[0])+Math.abs(distance[1]))*0.5;     // average travel 7 miles
+        travelDistance=distanceGenerator.nextExp(average_traval_distance);
+        end_coords=distanceGenerator.nextEndCoord(average_traval_distance,travelDistance);
+          
+        // int[] distance=distanceGenerator.nextCoordinate();
+        // end_coords[0]=start_coords[0]+distance[0];
+        // end_coords[1]=start_coords[1]+distance[1];
+//		travelDistance=(Math.abs(distance[0])+Math.abs(distance[1]))*0.5;     // average travel 7 miles
 		//maximumWaitingTime=new ExponentialDistribution(3).sample();   //average like to wait for 3 minutes
 		//maximumPrice=new ExponentialDistribution(20).sample();  // need to be changed later, follow by normal distribution?
+
+
+        arriveTime=0;
+        dropOffTime=0;
         wait_preference=logic.genWaitPreference();
         cost_preference=logic.genCostPreference();
 		Uber_preference=(int) (Math.random()*100);  // need to be changed later
 		this.id=pid;
+        this.cost=0;
         this.dispatcher=dispatcher;
         dispatcher.add_passenger(pid,start_coords[0],start_coords[1]);
         System.out.println("Passenger " + pid + " start at " + start_coords[0] + "," + start_coords[1]);
@@ -72,5 +81,27 @@ public class Passenger {
 		return this.Uber_preference;
 	}
 
+    public double getCost(){
+        return this.cost;
+    }
 	
+    public void setCost(double cost){
+        this.cost=cost;
+    }
+
+    public double getArrivalTime(){
+        return this.arriveTime;
+    }
+
+    public void setArrivalTime(double currentTime){
+        this.arriveTime=currentTime;
+    }
+
+    public double getDropOffTime(){
+        return this.dropOffTime;
+    }
+
+    public void setDropOffTime(double currentTime){
+        this.dropOffTime=currentTime;
+    }
 }
