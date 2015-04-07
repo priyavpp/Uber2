@@ -42,6 +42,7 @@ public class PassengerLogic extends Logic{
     public double genWaitPreference(){
         return wait_preference_dist.nextNormal();
     }
+    
     @Override
     public double computeScore(String name, ArrayList<Double> data){
         double cost= data.get(0);
@@ -56,6 +57,4 @@ public class PassengerLogic extends Logic{
         updateAlternative("taxi",new ArrayList<Double>(Arrays.asList(distance*2.0,wait)));
         return decide("uber");
     }
-
-
 }

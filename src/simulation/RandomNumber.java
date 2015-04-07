@@ -51,15 +51,7 @@ public class RandomNumber {
         return new int[]{x, y};
     }
 
-
-
-
     public void reset(){
         RNG = new Random(seed);
     }
-
-
-
-
-
 }

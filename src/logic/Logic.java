@@ -21,6 +21,7 @@ public class Logic {
             score=0.0;
         }
     }
+   
     ArrayList<Alternative> alternatives;
     HashMap<String,Alternative> nameMap;
 
@@ -30,9 +31,10 @@ public class Logic {
     }
 
     public double computeScore(String name, ArrayList<Double> data){
-        if (data.size()>0) return data.get(0);
+        if (data.size()>0) return data.get(0);///???
         return 0.0;
     }
+    
     public void addAlternative(String name){
         int index = alternatives.size();
         Alternative a = new Alternative(index,name,new ArrayList<Double>());

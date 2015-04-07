@@ -17,6 +17,14 @@ import java.util.Arrays;
 5. change the setup in driver and passenger logic so that passengers and drivers can make different decisions.
  */
 
+/*==============Some potential problem and corrected mistakes======
+ * 1.Out of grid possibility by randomly generate distance, use mod.
+ * 2.max_passenger should be the average number of passenger appears in 1 min
+ * 3.interarrival time follows exp(1/averagepassenger) distribution, so use nextExp() instead
+ * 4.Passenger get total price for the whole travel distance without knowing the surge. (need discuss)
+ * 
+ */
+
 public class SimWorld implements SimEventHandler {
 	// class variables: dispatcher and list of drivers and passengers
 
@@ -49,7 +57,7 @@ public class SimWorld implements SimEventHandler {
 		dlogic = new DriverLogic(randomSeed);
 
         mapGenerator = new RandomNumber(123,n_grid);
-        interarrival = new RandomNumber(123,10);
+        interarrival = new RandomNumber(123,1.0/max_passenger);
         distanceGenerator = new RandomNumber(123,n_grid/4);
 
         dispatcher = new Dispatcher();
@@ -62,10 +70,8 @@ public class SimWorld implements SimEventHandler {
         }
 
         Passenger.setGenerator(mapGenerator,distanceGenerator);
-
-
-		passengers = new Passenger[max_passenger];
-
+        
+		passengers = new Passenger[100*max_passenger];
 
 		scheduler = new SimulationEngine();
 		scheduler.initialize(this);
@@ -75,8 +81,6 @@ public class SimWorld implements SimEventHandler {
 		scheduler.scheduleEvent(0.1, "arrival", new
 		 ArrayList<String>(Arrays.asList(0 + "")));
         scheduler.scheduleEvent(0, "driver_check", new ArrayList<String>());
-
-
 	}
 
 	// events
@@ -86,7 +90,7 @@ public class SimWorld implements SimEventHandler {
 		Passenger newPassenger = new Passenger(pid,dispatcher,plogic);
         passengers[pid]=newPassenger;
         scheduler.scheduleEvent(currentTime+0.1,"query",new ArrayList<String>(Arrays.asList(pid+"")));
-		scheduler.scheduleEvent(currentTime+Math.round(interarrival.nextDouble()), "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
+		scheduler.scheduleEvent(currentTime+Math.round(10*interarrival.nextExp())/10.0, "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
 		System.out.println("time " + currentTime + ": arrival of passenger " + pid);
 	}
 
@@ -100,7 +104,7 @@ public class SimWorld implements SimEventHandler {
         Passenger p = passengers[pid];
 		double cost=dispatcher.get_price(p);
         if (cost==-1){
-            System.out.println("No Driver available.");
+            System.out.println("No Driver available."); 
             return;
         }
         double eta=dispatcher.get_eta(pid);
@@ -108,7 +112,6 @@ public class SimWorld implements SimEventHandler {
 			scheduler.scheduleEvent(currentTime+0.5,"request" , new ArrayList<String>(Arrays.asList(pid+"")));
             System.out.println("Passenger "+pid+" decided to take uber");
 		}else {System.out.println("Passenger "+pid+" decided not to take uber");}
-
 	}
 
 	
@@ -129,10 +132,9 @@ public class SimWorld implements SimEventHandler {
         Passenger p = passengers[pid];
         int[] coords = p.getDestination();
 		dispatcher.update_driver_position(did, coords[0], coords[1]);
-		
 		// driver moves to an new location and becomes free to take new
 		// passengers
-
+		drivers[did].offservice(); //
     }
 
     public void driver_check() {
@@ -148,7 +150,7 @@ public class SimWorld implements SimEventHandler {
             if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator);
         }
 
-        scheduler.scheduleEvent(currentTime+10,"driver_check",new ArrayList<String>());
+        scheduler.scheduleEvent(currentTime+10*60,"driver_check",new ArrayList<String>());
 	}
 
 	@Override
@@ -156,8 +158,8 @@ public class SimWorld implements SimEventHandler {
 		String s = e.getType();
 		ArrayList<String> data = e.getData();
 		if (s.equals("arrival")) {
-			int id = Integer.parseInt(data.get(0));
-			arrival(id);
+			int pid = Integer.parseInt(data.get(0));
+			arrival(pid);
 		}
 
 		if (s.equals("query")) {
@@ -167,7 +169,7 @@ public class SimWorld implements SimEventHandler {
 
 		if (s.equals("drop_off")) {
 			int pid = Integer.parseInt(data.get(0));
-			int did=Integer.parseInt(data.get(1));
+			int did = Integer.parseInt(data.get(1));
 			drop_off(pid,did);
 		}
 
@@ -175,6 +177,7 @@ public class SimWorld implements SimEventHandler {
 			int pid = Integer.parseInt(data.get(0));
 			request(pid);
 		}
+		
 		if (s.equals("driver_check")) {
 			driver_check();
 		}
@@ -190,7 +193,8 @@ public class SimWorld implements SimEventHandler {
 		//int max_time = Integer.parseInt(args[0]);
         SimWorld sim = new SimWorld(); // create new simulation
         int max_time=10;
-		sim.initialize(10, 1000, max_time);
+        int n_grid = 10;
+		sim.initialize(10, 100, n_grid);
 		sim.runSimulation(max_time);
 	}
 }

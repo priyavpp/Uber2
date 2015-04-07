@@ -40,15 +40,21 @@ public class Driver {
 
     public void become_active(){
         active = true;
+        onService = false;
         // to be implemented: randomly assign a position to driver.
         dispatcher.update_driver_position(id,0,0);//
     }
 
     public void become_active(RandomNumber generator){
         active = true;
+        onService = false;
         int[] coords = generator.nextCoordinate();
         dispatcher.update_driver_position(id,coords[0],coords[1]);
         System.out.println("Driver "+id+" added on ("+coords[0]+", "+coords[1]+")");
+    }
+    
+    public void offservice(){
+    	onService=false;
     }
 
     public void on_service(){

@@ -40,9 +40,6 @@ public class DriverLogic extends Logic {
         return 0.0;
     }
 
-
-
-
     public boolean decideWork(double revenue_estimate){
         updateAlternative("work", new ArrayList<Double>(Arrays.asList(revenue_estimate)));
         return decide("work");
