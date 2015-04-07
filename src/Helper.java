@@ -9,18 +9,8 @@ public class Helper {
 		geo[0]=rn.nextDouble()*100;
 		return geo;
 	}
-	
-
-
-
-    
+  
     public static void updateDriverStatus(int demands, int driver_numbers){
     	// not implement yet
-    }
-    
-    
-
-    
-
-	
+    }	
 }

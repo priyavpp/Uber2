@@ -7,6 +7,9 @@ import java.util.Random;
 
 //import org.apache.commons.math3.distribution.ExponentialDistribution;
 
+//GetDestination return int[] instead of Coord class.
+//TravelDistance why multiply 0.5?
+
 
 
 public class Passenger {
@@ -67,7 +70,6 @@ public class Passenger {
     public boolean decide_uber(double cost,double wait){
         return logic.decideUber(cost_preference,wait_preference,travelDistance,cost,wait);
     }
-
 	
 	public int getID(){
 		return this.id;

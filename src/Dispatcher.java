@@ -6,7 +6,7 @@ import java.util.Queue;
  * Created by linahu on 3/28/15.
  */
 public class Dispatcher {
-     class Coordinate{
+    class Coordinate{
         private final int x;
         private final int y;
 
@@ -78,7 +78,9 @@ public class Dispatcher {
 
     public void add_passenger(int pid, int x, int y){
         passengerPostion.put(pid,new Coordinate(x,y));
+        //don't need mapDetail.get(new Coordinate(x,y)).passengers.add(pid)?
     }
+    
     public void initialize_map(int n){
         for (int i = 0; i<n; i++){
             for (int j = 0; j <n; j++){
@@ -87,7 +89,7 @@ public class Dispatcher {
             }
         }
         n_grid=n;
-        GridDetail gd = new GridDetail(new Coordinate(-1,-1));
+        GridDetail gd = new GridDetail(new Coordinate(-1,-1)); //What for grid(-1,-1)
         mapDetail.put(new Coordinate(-1,-1),gd);
     }
 
@@ -95,15 +97,12 @@ public class Dispatcher {
         surge_price=surge;
     }
 
-
     // need to be modified
     public double getRevenueEstimate(){
         return surge_price*100;
     }
-
-    
+  
     public void update_driver_position(int id,int newX,int newY){
-
         Coordinate coords = driverPostion.get(id);
         mapDetail.get(coords).drivers.remove(new Integer(id));
         mapDetail.get(new Coordinate(newX,newY)).drivers.add(id);
@@ -164,6 +163,7 @@ public class Dispatcher {
         driverCandidate.remove(pid);
         return did;
     }
+    
     public double get_price(double travel_distance){
 //    	for Atlanta, the basic price is calculated by the following equation:
 //    	https://www.uber.com/cities/atlanta
@@ -176,10 +176,8 @@ public class Dispatcher {
         double basicPrice= 1.15+0.16*travel_distance/40+0.95*travel_distance+1;
         return surge_price*basicPrice;
     }
+    
     public double get_price(Passenger p){
         return get_price(p.getTravelDistance());
-
     }
-
-
 }

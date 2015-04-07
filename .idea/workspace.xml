@@ -2,15 +2,27 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="497aaf64-a5f9-4e23-a4b9-cc6b7ea9deaf" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Uber2" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SimWorld.class" afterPath="$PROJECT_DIR$/src/SimWorld.class" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bin/.gitignore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/hs_err_pid13448.log" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/replay_pid13448.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Dispatcher$Coordinate.class" afterPath="$PROJECT_DIR$/bin/Dispatcher$Coordinate.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Dispatcher$GridDetail.class" afterPath="$PROJECT_DIR$/bin/Dispatcher$GridDetail.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Dispatcher.class" afterPath="$PROJECT_DIR$/bin/Dispatcher.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Driver.class" afterPath="$PROJECT_DIR$/bin/Driver.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/logic/DriverLogic.class" afterPath="$PROJECT_DIR$/bin/logic/DriverLogic.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/logic/Logic$Alternative.class" afterPath="$PROJECT_DIR$/bin/logic/Logic$Alternative.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/logic/Logic.class" afterPath="$PROJECT_DIR$/bin/logic/Logic.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/Passenger.class" afterPath="$PROJECT_DIR$/bin/Passenger.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/logic/PassengerLogic.class" afterPath="$PROJECT_DIR$/bin/logic/PassengerLogic.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/simulation/RandomNumber.class" afterPath="$PROJECT_DIR$/bin/simulation/RandomNumber.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/simulation/SimEvent.class" afterPath="$PROJECT_DIR$/bin/simulation/SimEvent.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/simulation/SimEventHandler.class" afterPath="$PROJECT_DIR$/bin/simulation/SimEventHandler.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/SimWorld.class" afterPath="$PROJECT_DIR$/bin/SimWorld.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/simulation/SimulationEngine.class" afterPath="$PROJECT_DIR$/bin/simulation/SimulationEngine.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Dispatcher.java" afterPath="$PROJECT_DIR$/src/Dispatcher.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Driver.java" afterPath="$PROJECT_DIR$/src/Driver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/logic/DriverLogic.java" afterPath="$PROJECT_DIR$/src/logic/DriverLogic.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Helper.java" afterPath="$PROJECT_DIR$/src/Helper.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Passenger.java" afterPath="$PROJECT_DIR$/src/Passenger.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/simulation/RandomNumber.java" afterPath="$PROJECT_DIR$/src/simulation/RandomNumber.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SimWorld.java" afterPath="$PROJECT_DIR$/src/SimWorld.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Uber2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,11 +58,9 @@
         <entry file="file://$PROJECT_DIR$/src/Driver.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="70" column="27" selection-start-line="70" selection-start-column="27" selection-end-line="70" selection-end-column="27" />
+              <caret line="71" column="12" selection-start-line="71" selection-start-column="12" selection-end-line="71" selection-end-column="12" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1804#1805#0" expanded="true" />
-                <element signature="e#1882#1883#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -59,8 +69,8 @@
       <file leaf-file-name="DriverLogic.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/logic/DriverLogic.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7943445">
-              <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.71722364">
+              <caret line="57" column="30" selection-start-line="57" selection-start-column="30" selection-end-line="57" selection-end-column="30" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -444,12 +454,12 @@
       <updated>1427760883748</updated>
       <workItem from="1428335507639" duration="1294000" />
       <workItem from="1428432104562" duration="126000" />
-      <workItem from="1428434332723" duration="1360000" />
+      <workItem from="1428434332723" duration="1465000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2780000" />
+    <option name="totallyTimeSpent" value="2885000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="10" y="23" width="1260" height="690" extended-state="0" />
@@ -536,8 +546,6 @@
           <caret line="49" column="78" selection-start-line="49" selection-start-column="78" selection-end-line="49" selection-end-column="78" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1804#1805#0" expanded="true" />
-            <element signature="e#1882#1883#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -576,8 +584,8 @@
           <caret line="136" column="12" selection-start-line="136" selection-start-column="12" selection-end-line="136" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2075#2076#0" expanded="true" />
-            <element signature="e#2136#2137#0" expanded="true" />
+            <element signature="e#2074#2075#0" expanded="true" />
+            <element signature="e#2212#2213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -617,8 +625,6 @@
           <caret line="49" column="78" selection-start-line="49" selection-start-column="78" selection-end-line="49" selection-end-column="78" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1804#1805#0" expanded="true" />
-            <element signature="e#1882#1883#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -657,8 +663,8 @@
           <caret line="136" column="12" selection-start-line="136" selection-start-column="12" selection-end-line="136" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2075#2076#0" expanded="true" />
-            <element signature="e#2136#2137#0" expanded="true" />
+            <element signature="e#2074#2075#0" expanded="true" />
+            <element signature="e#2212#2213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -687,8 +693,6 @@
           <caret line="49" column="78" selection-start-line="49" selection-start-column="78" selection-end-line="49" selection-end-column="78" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1804#1805#0" expanded="true" />
-            <element signature="e#1882#1883#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -727,8 +731,8 @@
           <caret line="136" column="12" selection-start-line="136" selection-start-column="12" selection-end-line="136" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2075#2076#0" expanded="true" />
-            <element signature="e#2136#2137#0" expanded="true" />
+            <element signature="e#2074#2075#0" expanded="true" />
+            <element signature="e#2212#2213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -757,8 +761,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1804#1805#0" expanded="true" />
-            <element signature="e#1882#1883#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -797,8 +799,8 @@
           <caret line="129" column="0" selection-start-line="129" selection-start-column="0" selection-end-line="129" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2075#2076#0" expanded="true" />
-            <element signature="e#2136#2137#0" expanded="true" />
+            <element signature="e#2074#2075#0" expanded="true" />
+            <element signature="e#2212#2213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -827,8 +829,6 @@
           <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1804#1805#0" expanded="true" />
-            <element signature="e#1882#1883#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -839,8 +839,8 @@
           <caret line="73" column="60" selection-start-line="73" selection-start-column="60" selection-end-line="73" selection-end-column="60" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2075#2076#0" expanded="true" />
-            <element signature="e#2136#2137#0" expanded="true" />
+            <element signature="e#2074#2075#0" expanded="true" />
+            <element signature="e#2212#2213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -861,8 +861,8 @@
           <caret line="136" column="12" selection-start-line="136" selection-start-column="12" selection-end-line="136" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2075#2076#0" expanded="true" />
-            <element signature="e#2136#2137#0" expanded="true" />
+            <element signature="e#2074#2075#0" expanded="true" />
+            <element signature="e#2212#2213#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -899,11 +899,9 @@
     <entry file="file://$PROJECT_DIR$/src/Driver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="70" column="27" selection-start-line="70" selection-start-column="27" selection-end-line="70" selection-end-column="27" />
+          <caret line="71" column="12" selection-start-line="71" selection-start-column="12" selection-end-line="71" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1804#1805#0" expanded="true" />
-            <element signature="e#1882#1883#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -918,8 +916,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/logic/DriverLogic.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7943445">
-          <caret line="59" column="0" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.71722364">
+          <caret line="57" column="30" selection-start-line="57" selection-start-column="30" selection-end-line="57" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -3,6 +3,9 @@ import simulation.RandomNumber;
 
 import java.util.Random;
 
+//become_active() randomly set the initial position
+//decide_work/rest() need consider the demand and present number of vehicles. 
+//idleTime not implemented yet.
 
 public class Driver {
     private int id;
@@ -33,14 +36,12 @@ public class Driver {
 
     public boolean isOnService(){return onService;}
 
-    public boolean isActive(){
-        return active;
-    }
+    public boolean isActive(){return active;}
 
     public void become_active(){
         active = true;
         // to be implemented: randomly assign a position to driver.
-        dispatcher.update_driver_position(id,0,0);
+        dispatcher.update_driver_position(id,0,0);//
     }
 
     public void become_active(RandomNumber generator){
@@ -52,7 +53,6 @@ public class Driver {
 
     public void on_service(){
         onService=true;
-        // to be implemented: randomly assign a position to driver.
         dispatcher.remove_driver(id);
     }
 
@@ -69,6 +69,7 @@ public class Driver {
 
     public boolean decide_rest(){
         return logic.decideRest(hours_working,rest_preference,revenue);
+<<<<<<< HEAD
     }
 
     public void setRevenue(double revenue){
@@ -87,4 +88,7 @@ public class Driver {
         return this.hours_working;
     }
 	
+=======
+    }	
+>>>>>>> origin/master
 }
