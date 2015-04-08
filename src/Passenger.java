@@ -9,7 +9,7 @@ import java.util.Random;
 
 //GetDestination return int[] instead of Coord class.
 //TravelDistance why multiply 0.5?
-
+//why exponential distribution?
 
 
 public class Passenger {
@@ -28,6 +28,8 @@ public class Passenger {
     private double cost;
     private double arriveTime;
     private double dropOffTime;
+    private double waitingTime;
+    private boolean chooseUber;
 
 	public static void setGenerator(RandomNumber pgenerator,RandomNumber dgenerator){
         passengerGenerator = pgenerator;
@@ -41,7 +43,7 @@ public class Passenger {
 	public Passenger(int pid,Dispatcher dispatcher, PassengerLogic logic){
         start_coords = passengerGenerator.nextCoordinate();
         end_coords = new int[2];
-        travelDistance=(int)distanceGenerator.nextExp(average_traval_distance);
+        travelDistance=(int)distanceGenerator.nextExp(average_traval_distance); 
         int[] end_coords=distanceGenerator.nextEndCoord(average_traval_distance,travelDistance, start_coords);
 
         // int[] distance=distanceGenerator.nextCoordinate();
@@ -54,6 +56,7 @@ public class Passenger {
 
         arriveTime=0;
         dropOffTime=0;
+        chooseUber = false;
         wait_preference=logic.genWaitPreference();
         cost_preference=logic.genCostPreference();
 		Uber_preference=(int) (Math.random()*100);  // need to be changed later
@@ -72,6 +75,10 @@ public class Passenger {
     }
 
 
+    public void takeUber(){
+    	chooseUber=true;
+    }
+    
 	public double getTravelDistance(){
 		return this.travelDistance;
 	}
@@ -85,6 +92,9 @@ public class Passenger {
         this.cost=cost;
     }
 
+    public void setWaitingTime(double waitT){
+    	this.waitingTime = waitT;
+    }
     public double getArrivalTime(){
         return this.arriveTime;
     }

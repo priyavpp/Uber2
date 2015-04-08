@@ -6,6 +6,7 @@ import java.util.Random;
 //become_active() randomly set the initial position
 //decide_work/rest() need consider the demand and present number of vehicles. 
 //idleTime not implemented yet.
+//For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
 
 public class Driver {
     private int id;
@@ -64,6 +65,7 @@ public class Driver {
     }
 
     public void on_service() {
+    	//For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
         onService = true;
         dispatcher.remove_driver(id);
     }
@@ -90,7 +92,7 @@ public class Driver {
 
     }
 
-    public void setRevenue(double revenue) {
+    public void addRevenue(double revenue) {
         this.revenue += revenue;
     }
 
@@ -98,7 +100,7 @@ public class Driver {
         return this.revenue;
     }
 
-    public void setHours_working(double time) {
+    public void addHours_working(double time) {
         this.hours_working += time;
     }
 

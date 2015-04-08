@@ -15,6 +15,7 @@ import java.util.Arrays;
 3. Each driver should record their hours_working;
 4. Need to validate driver_check() function.
 5. change the setup in driver and passenger logic so that passengers and drivers can make different decisions.
+6. In the query, need to record whether the passenger chooses uber and takes one
  */
 
 /*==============Some potential problem and corrected mistakes======
@@ -22,19 +23,21 @@ import java.util.Arrays;
  * 2.max_passenger should be the average number of passenger appears in 1 min
  * 3.interarrival time follows exp(1/averagepassenger) distribution, so use nextExp() instead
  * 4.Passenger get total price for the whole travel distance without knowing the surge. (need discuss)
- * 
+ * 5.Request should be scheduled at the same time with receiving the query. Or, it's possible that one drivers get two assignment
+ * 6.Need recording the onRoadTime to get the EmptyCar Time by onRoadTime - WorkingTime
  */
 
 public class SimWorld implements SimEventHandler {
 	// class variables: dispatcher and list of drivers and passengers
-
 	SimulationEngine scheduler;
 
     int n_passengers;
     int n_drivers;
     Driver[] drivers;
-	Passenger[] passengers;
-
+	ArrayList<Passenger> passengers;
+	double averSpeed = 40.0/3600.0; //unit: miles/s
+	double interCheckTime = 10.0*60.0; //unit s. Driver decide whether to work or rest every 10min
+ 
 	Dispatcher dispatcher;
 
     PassengerLogic plogic;
@@ -47,9 +50,6 @@ public class SimWorld implements SimEventHandler {
     RandomNumber distanceGenerator;
     int n_grid;
 
-
-
-
 	public void initialize(int n_drivers, int max_passenger,int n_grid) {
 		totalRevenue=0;
         n_passengers = 0;
@@ -59,9 +59,9 @@ public class SimWorld implements SimEventHandler {
 		plogic = new PassengerLogic(randomSeed);
 		dlogic = new DriverLogic(randomSeed);
 
-        mapGenerator = new RandomNumber(123,n_grid);
-        interarrival = new RandomNumber(123,1.0/max_passenger);
-        distanceGenerator = new RandomNumber(123,n_grid/4);
+        mapGenerator = new RandomNumber(randomSeed,n_grid);
+        interarrival = new RandomNumber(randomSeed,60.0/max_passenger);
+        distanceGenerator = new RandomNumber(randomSeed,n_grid/4);
 
         dispatcher = new Dispatcher();
         dispatcher.initialize_map(n_grid);
@@ -74,7 +74,7 @@ public class SimWorld implements SimEventHandler {
 
         Passenger.setGenerator(mapGenerator,distanceGenerator);
         
-		passengers = new Passenger[100*max_passenger];
+		passengers = new ArrayList<Passenger>();
 
 		scheduler = new SimulationEngine();
 		scheduler.initialize(this);
@@ -86,25 +86,23 @@ public class SimWorld implements SimEventHandler {
         scheduler.scheduleEvent(0, "driver_check", new ArrayList<String>());
 	}
 
-	// events
+	// Events
 	public void arrival(int pid) {
-		// generate a new customer
+		//Generate the new passenger and schedule next arrival
         double currentTime=scheduler.getTime();
 		Passenger newPassenger = new Passenger(pid,dispatcher,plogic);
-        passengers[pid]=newPassenger;
+		passengers.add(newPassenger);
         scheduler.scheduleEvent(currentTime+0.1,"query",new ArrayList<String>(Arrays.asList(pid+"")));
 		scheduler.scheduleEvent(currentTime+Math.round(10*interarrival.nextExp())/10.0, "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
 		System.out.println("time " + Helper.round(currentTime,1) + ": arrival of passenger " + pid);
-}
-
+    }
 
 	public void query(int pid) {
 		// passenger query the dispatcher for eta and price
 		// if passenger decides to take the uber, will schedule a request event
-
         double currentTime=scheduler.getTime();
         System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" made a query");
-        Passenger p = passengers[pid];
+        Passenger p = passengers.get(pid);
 		double cost=dispatcher.get_price(p);
         if (cost==-1){
             System.out.println("No Driver available."); 
@@ -112,38 +110,35 @@ public class SimWorld implements SimEventHandler {
         }
         double eta=dispatcher.get_eta(pid);
         if (p.decide_uber(cost,eta)) {
+        	p.takeUber();
         	p.setCost(cost);
+        	p.setWaitingTime(eta);
 			p.setArrivalTime(currentTime+eta);
-			scheduler.scheduleEvent(currentTime+0.5,"request" , new ArrayList<String>(Arrays.asList(pid+"")));
+			scheduler.scheduleEvent(currentTime,"request" , new ArrayList<String>(Arrays.asList(pid+"")));
             System.out.println("Passenger "+pid+" decided to take uber");
 		}else {System.out.println("Passenger "+pid+" decided not to take uber");}
 	}
 
-	
-	// passenger requests to ride uber
-	// schedules a drop off event at +t time
 	public void request(int pid) {
         double currentTime=scheduler.getTime();
         int did = dispatcher.assign_driver(pid);
-        drivers[did].on_service();
-        Passenger p=passengers[pid];
-		scheduler.scheduleEvent(currentTime+p.getTravelDistance()/30*60, "drop_off", new ArrayList<String>(Arrays.asList(pid+"",did+"")));
+        drivers[did].on_service(); 
+        Passenger p = passengers.get(pid);
+		scheduler.scheduleEvent(currentTime+p.getTravelDistance()/averSpeed, "drop_off", new ArrayList<String>(Arrays.asList(pid+"",did+"")));
         System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" requested a car");
 	}
 
 	public void drop_off(int pid,int did) {
         double currentTime=scheduler.getTime();
         System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" was dropped off.");
-        Passenger p = passengers[pid];
+        Passenger p = passengers.get(pid);
 		p.setDropOffTime(currentTime);
         int[] coords = p.getDestination();
         Driver d= drivers[did];
-		d.setHours_working(p.getDropOffTime()-p.getArrivalTime());
-        d.setRevenue(p.getCost());
+		d.addHours_working(p.getDropOffTime()-p.getArrivalTime());
+        d.addRevenue(p.getCost());
         totalRevenue+=p.getCost();
 		dispatcher.update_driver_position(did, coords[0], coords[1]);
-		// driver moves to an new location and becomes free to take new
-		// passengers
 		drivers[did].offservice(); //
     }
 
@@ -159,10 +154,10 @@ public class SimWorld implements SimEventHandler {
                 if (d.decide_rest()) d.become_inactive();
             if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator);
         }
-
-        scheduler.scheduleEvent(currentTime+10*60,"driver_check",new ArrayList<String>());
+        scheduler.scheduleEvent(currentTime + interCheckTime,"driver_check",new ArrayList<String>());
 	}
 
+    // Others
 	@Override
 	public void executeEvent(SimEvent e) {
 		String s = e.getType();
@@ -193,7 +188,7 @@ public class SimWorld implements SimEventHandler {
 		}
 		
 		if (s.equals("save_status")) {
-			
+			//Write Status every 1min or 10min
 		}
 
 	}
@@ -204,11 +199,12 @@ public class SimWorld implements SimEventHandler {
 
 	public static void main(String[] args) {
 		// main program
-		//int max_time = Integer.parseInt(args[0]);
-        SimWorld sim = new SimWorld(); // create new simulation
-        int max_time=10;
-        int n_grid = 10;
-		sim.initialize(10, 100, n_grid);
-		sim.runSimulation(max_time);
+        SimWorld sim = new SimWorld();  //Create new simulation
+        int Simtime=100;         		//Simulation Time (sec).
+        int n_grid = 10;        		//N by N district
+        int n_drivers = 10;    		    //Number of drivers
+        int averPassenger = 100; 		//Average number of passenger in one minute(person/min)
+		sim.initialize(n_drivers, averPassenger, n_grid);
+		sim.runSimulation(Simtime);
 	}
 }
