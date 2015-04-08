@@ -9,6 +9,10 @@ import java.util.Random;
 //For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
 
 public class Driver {
+    public int getId() {
+        return id;
+    }
+
     private int id;
     //private double minimumSurge;
 

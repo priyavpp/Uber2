@@ -5,6 +5,8 @@ import logic.DriverLogic;
 import logic.PassengerLogic;
 import simulation.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -48,6 +50,8 @@ public class SimWorld implements SimEventHandler {
     RandomNumber mapGenerator;
     RandomNumber interarrival;
     RandomNumber distanceGenerator;
+
+	int PassengerCount;
     
 	public void initialize(int n_drivers, int aver_passenger,int n_grid) {
 		totalRevenue=0;
@@ -83,6 +87,7 @@ public class SimWorld implements SimEventHandler {
 		scheduler.scheduleEvent(0.1, "arrival", new
 		 ArrayList<String>(Arrays.asList(0 + "")));
         scheduler.scheduleEvent(0, "driver_check", new ArrayList<String>());
+		scheduler.scheduleEvent(10,"exportData", new ArrayList<String>());
 	}
 
 	// Events
@@ -91,16 +96,17 @@ public class SimWorld implements SimEventHandler {
         double currentTime=scheduler.getTime();
 		Passenger newPassenger = new Passenger(pid,dispatcher,plogic);
 		passengers.add(newPassenger);
-        scheduler.scheduleEvent(currentTime+0.1,"query",new ArrayList<String>(Arrays.asList(pid+"")));
+        scheduler.scheduleEvent(currentTime + 0.1, "query", new ArrayList<String>(Arrays.asList(pid + "")));
 		scheduler.scheduleEvent(currentTime+Math.round(10*interarrival.nextExp())/10.0 + 0.1, "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
-		System.out.println("time " + Helper.round(currentTime,1) + ": arrival of passenger " + pid);
+		System.out.println("time " + Helper.round(currentTime, 1) + ": arrival of passenger " + pid);
+		PassengerCount=pid+1;
     }
 
 	public void query(int pid) {
 		// passenger query the dispatcher for eta and price
 		// if passenger decides to take the uber, will schedule a request event
         double currentTime=scheduler.getTime();
-        System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" made a query");
+        System.out.println("time " + Helper.round(currentTime, 1) + ": passenger " + pid + " made a query");
         Passenger p = passengers.get(pid);
 		double cost=dispatcher.get_price(p);
         double eta=dispatcher.get_eta(pid);
@@ -153,8 +159,99 @@ public class SimWorld implements SimEventHandler {
                 if (d.decide_rest()) d.become_inactive();
             if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator);
         }
-        scheduler.scheduleEvent(currentTime + interCheckTime,"driver_check",new ArrayList<String>());
+        scheduler.scheduleEvent(currentTime + interCheckTime, "driver_check", new ArrayList<String>());
 	}
+
+
+	public void exportData(){
+		double currentTime=scheduler.getTime();
+		System.out.println("Data time " +Helper.round(currentTime,1)+" dataExport funtion is excuted!");
+		scheduler.scheduleEvent(currentTime+10,"exportData", new ArrayList<String>());
+
+		String fileName_p="Passenger_"+Helper.round(currentTime,1)+".csv";
+		System.out.println(fileName_p);
+		try{
+			FileWriter writer= new FileWriter(fileName_p);
+			writer.append("Passenger ID");
+			writer.append(',');
+			writer.append("TravelDistance");
+			writer.append(',');
+			writer.append("TravelTime");
+			writer.append(',');
+			writer.append("Cost");
+			writer.append(',');
+			writer.append("Take Uber");
+			writer.append(',');
+			writer.append("Waiting Time");
+			writer.append('\n');    // For windows, Please replace to \r\n
+
+			for (int i=0; i<PassengerCount; i++){
+				Passenger p=passengers.get(i);
+				writer.append(String.valueOf(p.getId()));
+				writer.append(',');
+				writer.append(Double.toString(p.getTravelDistance()));
+				writer.append(',');
+				writer.append((Double.toString((p.getDropOffTime()-p.getArrivalTime()))));
+				writer.append(',');
+				writer.append((Double.toString(p.getCost())));
+				writer.append(',');
+				writer.append(Boolean.toString(p.isChooseUber()));
+				writer.append(',');
+				writer.append((Double.toString(p.getWaitingTime())));
+				writer.append('\n');
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e){
+			System.out.println("There is an IO exception:  "+ e.getMessage());
+			e.printStackTrace();
+		}
+
+
+		String fileName_d="Driver_"+Helper.round(currentTime,1)+".csv";
+		try{
+			FileWriter writer=new FileWriter(fileName_d);
+			writer.append("Driver ID");
+			writer.append(',');
+			writer.append("Location X");
+			writer.append(',');
+			writer.append("Location Y");
+			writer.append(',');
+			writer.append("Is OnService");
+			writer.append(',');
+			writer.append("Is Active");
+			writer.append(',');
+			writer.append("Working Hours");
+			writer.append(',');
+			writer.append("idleTime");
+			writer.append(',');
+			writer.append("Revenus");
+			writer.append('\n');
+			for( Driver d : drivers){
+				writer.append(String.valueOf(d.getId()));
+				writer.append(',');
+				writer.append(String.valueOf(dispatcher.getDriverPostion().get(d.getId()).getX()));
+				writer.append(',');
+				writer.append(String.valueOf(dispatcher.getDriverPostion().get(d.getId()).getY()));
+				writer.append(',');
+				writer.append(Boolean.toString(d.isOnService()));
+				writer.append(',');
+				writer.append(Boolean.toString(d.isActive()));
+				writer.append(',');
+				writer.append(Double.toString(d.getHours_working()));
+				writer.append(',');
+				writer.append(Double.toString(d.getIdleTime()));
+				writer.append(',');
+				writer.append(Double.toString((d.getRevenue())));
+			}
+			writer.flush();
+			writer.close();
+		} catch (IOException e){
+			System.out.println(e.toString());
+			e.fillInStackTrace();
+		}
+	}
+
 
     // Others
 	@Override
@@ -186,8 +283,9 @@ public class SimWorld implements SimEventHandler {
 			driver_check();
 		}
 		
-		if (s.equals("save_status")) {
+		if (s.equals("exportData")) {
 			//Write Status every 1min or 10min
+			exportData();
 		}
 
 	}
@@ -199,7 +297,7 @@ public class SimWorld implements SimEventHandler {
 	public static void main(String[] args) {
 		// main program
         SimWorld sim = new SimWorld();  //Create new simulation
-        int Simtime=100;         		//Simulation Time (sec).
+        int Simtime=60;         		//Simulation Time (sec).
         int n_grid = 10;        		//N by N district
         int n_drivers = 10;    		    //Number of drivers
         int averPassenger = 100; 		//Average number of passenger in one minute(person/min)

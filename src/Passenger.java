@@ -19,16 +19,21 @@ public class Passenger {
 	private double wait_preference;
 	private double cost_preference;
 	private int Uber_preference;
-	private int id;
+
+    private int id;
     private static RandomNumber passengerGenerator;
     private static RandomNumber distanceGenerator;
 	Dispatcher dispatcher;
     PassengerLogic logic;
-    //private double average_traval_distance=7;
     private double cost;
     private double arriveTime;
     private double dropOffTime;
+
+
+
     private double waitingTime;
+
+
     private boolean chooseUber;
 
 	public static void setGenerator(RandomNumber pgenerator,RandomNumber dgenerator){
@@ -75,14 +80,17 @@ public class Passenger {
     }
 
 
-    public void takeUber(){
-    	this.chooseUber=true;
-    }
     
 	public double getTravelDistance(){
 		return this.travelDistance;
 	}
+    public boolean isChooseUber() {
+        return chooseUber;
+    }
 
+    public void takeUber(){
+        this.chooseUber=true;
+    }
 
     public double getCost(){
         return this.cost;
@@ -110,4 +118,11 @@ public class Passenger {
     public void setDropOffTime(double currentTime){
         this.dropOffTime=currentTime;
     }
+    public int getId() {
+        return id;
+    }
+    public double getWaitingTime() {
+        return waitingTime;
+    }
+
 }
