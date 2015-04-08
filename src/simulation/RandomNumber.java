@@ -7,7 +7,7 @@ public class RandomNumber {
     long seed;
     double mu;
     double sigma;
-    final int grid_size=10;
+    int grid_size;
 
     public RandomNumber(long seed){
         this.seed = seed;
@@ -27,6 +27,9 @@ public class RandomNumber {
         this.sigma = sigma;
     }
 
+    public void setGridSize(int n){
+    	grid_size = n;
+    }
     public double nextDouble(){
         return RNG.nextDouble();
     }
@@ -71,28 +74,34 @@ public class RandomNumber {
     }
 
 
-    public int[] nextEndCoord(double mu, int travelDistance,int[] start_coor ){
+    public int[] nextEndCoord(int travelDistance,int[] start_coor ){
         int[] end_coor= new int[2];
+        //Distance Size
         int x= (int)(RNG.nextDouble()*travelDistance);
         int y= travelDistance-x;
-        if (nextDouble()>0.5) {
+        
+        //Distance Direction
+        if (RNG.nextDouble()>0.5) {
             x=-x;
         }
-        if (nextDouble()>0.5) {
+        if (RNG.nextDouble()>0.5) {
             y=-y;
         }
+        
+        //Correction of out of boundary
         end_coor[0]=x+start_coor[0];
         if(end_coor[0]<0){
             end_coor[0]+=grid_size;
         }
-        if(end_coor[0]>grid_size){
+        if(end_coor[0]>=grid_size){
             end_coor[0]-=grid_size;
         }
+        
         end_coor[1]=y+start_coor[1];
         if (end_coor[1]<0){
             end_coor[1]+=grid_size;
         }
-        if(end_coor[1]>mu){
+        if(end_coor[1]>=grid_size){
             end_coor[1]-=grid_size;
         }
         

@@ -31,7 +31,7 @@ public class SimWorld implements SimEventHandler {
 	// class variables: dispatcher and list of drivers and passengers
 	SimulationEngine scheduler;
 
-    int n_passengers;
+	int n_grid;
     int n_drivers;
     Driver[] drivers;
 	ArrayList<Passenger> passengers;
@@ -48,11 +48,9 @@ public class SimWorld implements SimEventHandler {
     RandomNumber mapGenerator;
     RandomNumber interarrival;
     RandomNumber distanceGenerator;
-    int n_grid;
-
-	public void initialize(int n_drivers, int max_passenger,int n_grid) {
+    
+	public void initialize(int n_drivers, int aver_passenger,int n_grid) {
 		totalRevenue=0;
-        n_passengers = 0;
         this.n_drivers=n_drivers;
         this.n_grid=n_grid;
 
@@ -60,8 +58,9 @@ public class SimWorld implements SimEventHandler {
 		dlogic = new DriverLogic(randomSeed);
 
         mapGenerator = new RandomNumber(randomSeed,n_grid);
-        interarrival = new RandomNumber(randomSeed,60.0/max_passenger);
-        distanceGenerator = new RandomNumber(randomSeed,n_grid/4);
+        interarrival = new RandomNumber(randomSeed,60.0/aver_passenger);
+        distanceGenerator = new RandomNumber(randomSeed,n_grid/4.0);  //Average Travel Distance is set as n_grid/4.0)
+        distanceGenerator.setGridSize(n_grid); 
 
         dispatcher = new Dispatcher();
         dispatcher.initialize_map(n_grid);
