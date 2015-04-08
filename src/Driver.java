@@ -27,13 +27,13 @@ public class Driver {
     public Driver(int did, Dispatcher dispatcher, DriverLogic logic) {
         id = did;
         onService = false;
+        active = false;
         idleTime = 0;
         this.dispatcher = dispatcher;
         dispatcher.add_driver(id, -1, -1);
         hours_working = 0;
         revenue = 0;
         this.logic = logic;
-
     }
 
     public boolean isOnService() {
