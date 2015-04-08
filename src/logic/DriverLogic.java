@@ -45,11 +45,11 @@ public class DriverLogic extends Logic {
         return decide("work");
     }
 
+    /*  Still need to discuss about its detail  */
     public boolean decideRest(double hours_working, double rest_preference,double revenue){
         updateAlternative("work", new ArrayList<Double>(Arrays.asList(revenue)));
         updateAlternative("rest", new ArrayList<Double>(Arrays.asList(hours_working,rest_preference)));
         return decide("rest");
-
     }
 
 }

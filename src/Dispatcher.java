@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Queue;
 
 /**
  * Created by linahu on 3/28/15.
@@ -113,6 +112,7 @@ public class Dispatcher {
     public void remove_driver(int id){
         Coordinate coords = driverPostion.get(id);
         mapDetail.get(coords).drivers.remove(new Integer(id));
+
         driverPostion.put(id,new Coordinate(-1,-1));
     }
 
@@ -138,7 +138,7 @@ public class Dispatcher {
           //  System.out.println(g.coords.x+" "+g.coords.y);
 
             if (g.drivers.size()>0){
-                System.out.println("Assigned driver "+g.drivers.get(0)+" to passenger "+pid);
+                System.out.println("Assigned candidate driver "+g.drivers.get(0)+" to passenger "+pid);
                 driverCandidate.put(pid, g.drivers.get(0));
                 return wait;
             } else{

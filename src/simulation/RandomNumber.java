@@ -7,6 +7,7 @@ public class RandomNumber {
     long seed;
     double mu;
     double sigma;
+    final int grid_size=10;
 
     public RandomNumber(long seed){
         this.seed = seed;
@@ -35,6 +36,11 @@ public class RandomNumber {
         return ((-mu)*Math.log(1.0-r));
     }
 
+    public double nextExp(double new_mu){
+        double r = RNG.nextDouble();
+        return ((-new_mu)*Math.log(1.0-r));
+    }    
+
     public double nextNormal(){
         double z = RNG.nextGaussian();
         double next= (z*sigma+mu);
@@ -45,11 +51,54 @@ public class RandomNumber {
         }
     }
 
+
+    public double nextNormal(double limit){
+        double z = RNG.nextGaussian();
+        double next= (z*sigma+mu);
+        System.out.println("The next number is "+next);
+        if (next > 0 && next<=limit){
+            return next;
+        }else{
+            return nextNormal(limit);
+        }
+    }
+
+
     public int[] nextCoordinate(){
         int x = (int) (RNG.nextDouble()*mu);
         int y = (int) (RNG.nextDouble()*mu);
         return new int[]{x, y};
     }
+
+
+    public int[] nextEndCoord(double mu, int travelDistance,int[] start_coor ){
+        int[] end_coor= new int[2];
+        int x= (int)(RNG.nextDouble()*travelDistance);
+        int y= travelDistance-x;
+        if (nextDouble()>0.5) {
+            x=-x;
+        }
+        if (nextDouble()>0.5) {
+            y=-y;
+        }
+        end_coor[0]=x+start_coor[0];
+        if(end_coor[0]<0){
+            end_coor[0]+=grid_size;
+        }
+        if(end_coor[0]>grid_size){
+            end_coor[0]-=grid_size;
+        }
+        end_coor[1]=y+start_coor[1];
+        if (end_coor[1]<0){
+            end_coor[1]+=grid_size;
+        }
+        if(end_coor[1]>mu){
+            end_coor[1]-=grid_size;
+        }
+        
+        return end_coor;
+    }
+
 
     public void reset(){
         RNG = new Random(seed);

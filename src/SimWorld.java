@@ -47,6 +47,9 @@ public class SimWorld implements SimEventHandler {
     RandomNumber distanceGenerator;
     int n_grid;
 
+
+
+
 	public void initialize(int n_drivers, int max_passenger,int n_grid) {
 		totalRevenue=0;
         n_passengers = 0;
@@ -91,8 +94,8 @@ public class SimWorld implements SimEventHandler {
         passengers[pid]=newPassenger;
         scheduler.scheduleEvent(currentTime+0.1,"query",new ArrayList<String>(Arrays.asList(pid+"")));
 		scheduler.scheduleEvent(currentTime+Math.round(10*interarrival.nextExp())/10.0, "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
-		System.out.println("time " + currentTime + ": arrival of passenger " + pid);
-	}
+		System.out.println("time " + Helper.round(currentTime,1) + ": arrival of passenger " + pid);
+}
 
 
 	public void query(int pid) {
@@ -100,7 +103,7 @@ public class SimWorld implements SimEventHandler {
 		// if passenger decides to take the uber, will schedule a request event
 
         double currentTime=scheduler.getTime();
-        System.out.println("time "+ currentTime+": passenger "+pid+" made a query");
+        System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" made a query");
         Passenger p = passengers[pid];
 		double cost=dispatcher.get_price(p);
         if (cost==-1){
@@ -109,6 +112,8 @@ public class SimWorld implements SimEventHandler {
         }
         double eta=dispatcher.get_eta(pid);
         if (p.decide_uber(cost,eta)) {
+        	p.setCost(cost);
+			p.setArrivalTime(currentTime+eta);
 			scheduler.scheduleEvent(currentTime+0.5,"request" , new ArrayList<String>(Arrays.asList(pid+"")));
             System.out.println("Passenger "+pid+" decided to take uber");
 		}else {System.out.println("Passenger "+pid+" decided not to take uber");}
@@ -123,14 +128,19 @@ public class SimWorld implements SimEventHandler {
         drivers[did].on_service();
         Passenger p=passengers[pid];
 		scheduler.scheduleEvent(currentTime+p.getTravelDistance()/30*60, "drop_off", new ArrayList<String>(Arrays.asList(pid+"",did+"")));
-        System.out.println("time "+ currentTime+": passenger "+pid+" requested a car");
+        System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" requested a car");
 	}
 
 	public void drop_off(int pid,int did) {
         double currentTime=scheduler.getTime();
-        System.out.println("time "+ currentTime+": passenger "+pid+" was dropped off.");
+        System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" was dropped off.");
         Passenger p = passengers[pid];
+		p.setDropOffTime(currentTime);
         int[] coords = p.getDestination();
+        Driver d= drivers[did];
+		d.setHours_working(p.getDropOffTime()-p.getArrivalTime());
+        d.setRevenue(p.getCost());
+        totalRevenue+=p.getCost();
 		dispatcher.update_driver_position(did, coords[0], coords[1]);
 		// driver moves to an new location and becomes free to take new
 		// passengers
@@ -177,9 +187,13 @@ public class SimWorld implements SimEventHandler {
 			int pid = Integer.parseInt(data.get(0));
 			request(pid);
 		}
-		
+
 		if (s.equals("driver_check")) {
 			driver_check();
+		}
+		
+		if (s.equals("save_status")) {
+			
 		}
 
 	}
