@@ -150,8 +150,8 @@ public class SimWorld implements SimEventHandler {
         for (int i=0;i<n_drivers;i++){
             Driver d =drivers[i];
             if (d.isActive() && !d.isOnService())
-                if (d.decide_rest()) d.become_inactive();
-            if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator);
+                if (d.decide_rest()) d.become_inactive(currentTime);
+            if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator, currentTime);
         }
         scheduler.scheduleEvent(currentTime + interCheckTime,"driver_check",new ArrayList<String>());
 	}
@@ -199,9 +199,9 @@ public class SimWorld implements SimEventHandler {
 	public static void main(String[] args) {
 		// main program
         SimWorld sim = new SimWorld();  //Create new simulation
-        int Simtime=100;         		//Simulation Time (sec).
+        int Simtime = 60;         		//Simulation Time (sec).
         int n_grid = 10;        		//N by N district
-        int n_drivers = 10;    		    //Number of drivers
+        int n_drivers = 100;    		//Number of drivers
         int averPassenger = 100; 		//Average number of passenger in one minute(person/min)
 		sim.initialize(n_drivers, averPassenger, n_grid);
 		sim.runSimulation(Simtime);

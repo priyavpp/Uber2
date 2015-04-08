@@ -9,15 +9,21 @@ import java.util.Random;
 //For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
 
 public class Driver {
+	//Data collection
+	private double TotalWorkingHour;
+	private double TotalActiveHour;
+	private double TotalIdleHour;
+	private double revenue;
+	
+	private double ActiveStartTime; //Only record the latest activate time
+	
     private int id;
     //private double minimumSurge;
-
     private boolean onService;
     private boolean active;
     private double hours_working;
 
-    private double idleTime;
-    private double revenue;
+   
 
     Dispatcher dispatcher;
     double rest_preference; //driver's preference to work
@@ -28,12 +34,15 @@ public class Driver {
         id = did;
         onService = false;
         active = false;
-        idleTime = 0;
         this.dispatcher = dispatcher;
         dispatcher.add_driver(id, -1, -1);
         hours_working = 0;
         revenue = 0;
         this.logic = logic;
+        
+        TotalWorkingHour = 0;
+        TotalActiveHour = 0;
+        TotalIdleHour = 0;
     }
 
     public boolean isOnService() {
@@ -45,18 +54,20 @@ public class Driver {
     }
 
 
-    public void become_active(){
+    public void become_active(double currentTime){
         active = true;
         onService = false;
         // to be implemented: randomly assign a position to driver.
         dispatcher.update_driver_position(id,0,0);//
+        ActiveStartTime = currentTime;
     }
 
-    public void become_active(RandomNumber generator) {
+    public void become_active(RandomNumber generator, double currentTime) {
         active = true;
         onService = false;
         int[] coords = generator.nextCoordinate();
         dispatcher.update_driver_position(id, coords[0], coords[1]);
+        ActiveStartTime = currentTime;
         System.out.println("Driver " + id + " added on (" + coords[0] + ", " + coords[1] + ")");
     }
     
@@ -70,18 +81,17 @@ public class Driver {
         dispatcher.remove_driver(id);
     }
 
-    public void become_inactive() {
+    public void become_inactive(double currentTime) {
+    	TotalActiveHour += (currentTime - ActiveStartTime);
+    	TotalWorkingHour += hours_working;
+    	TotalIdleHour = TotalActiveHour - TotalWorkingHour;
+    	
         active = false;
+        onService = false;
         hours_working = 0;
-        // to be implemented: randomly assign a position to driver.
         dispatcher.remove_driver(id);
     }
-    public void setIdleTime(double idleTime) {
-        this.idleTime = idleTime;
-    }
-    public double getIdleTime() {
-        return idleTime;
-    }
+    
     public boolean decide_work() {
         double revenue_estimate = dispatcher.getRevenueEstimate();
         return logic.decideWork(revenue_estimate);
