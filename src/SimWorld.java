@@ -92,7 +92,7 @@ public class SimWorld implements SimEventHandler {
 		Passenger newPassenger = new Passenger(pid,dispatcher,plogic);
 		passengers.add(newPassenger);
         scheduler.scheduleEvent(currentTime+0.1,"query",new ArrayList<String>(Arrays.asList(pid+"")));
-		scheduler.scheduleEvent(currentTime+Math.round(10*interarrival.nextExp())/10.0, "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
+		scheduler.scheduleEvent(currentTime+Math.round(10*interarrival.nextExp())/10.0 + 0.1, "arrival", new ArrayList<String>(Arrays.asList(pid+1 + "")));
 		System.out.println("time " + Helper.round(currentTime,1) + ": arrival of passenger " + pid);
     }
 
@@ -103,11 +103,11 @@ public class SimWorld implements SimEventHandler {
         System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" made a query");
         Passenger p = passengers.get(pid);
 		double cost=dispatcher.get_price(p);
-        if (cost==-1){
-            System.out.println("No Driver available."); 
-            return;
-        }
         double eta=dispatcher.get_eta(pid);
+		if (eta==-1){
+			System.out.println("No Driver available.");
+			return;
+		}
         if (p.decide_uber(cost,eta)) {
         	p.takeUber();
         	p.setCost(cost);

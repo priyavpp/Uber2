@@ -140,9 +140,9 @@ public class Dispatcher {
             if (g.drivers.size()>0){
                 System.out.println("Assigned candidate driver "+g.drivers.get(0)+" to passenger "+pid);
                 driverCandidate.put(pid, g.drivers.get(0));
-                return wait;
+                //assuming each grid takes exact 1 min to travel
+                return Math.abs(g.coords.x-current_grid.coords.x)+Math.abs(g.coords.y-current_grid.coords.y);
             } else{
-                wait++;
                 for(int i = 0;i<4;i++){
                     int newX = coordinate.x+dx[i];
                     int newY = coordinate.y+dy[i];
@@ -159,6 +159,10 @@ public class Dispatcher {
     }
 
     public int assign_driver(int pid){
+        if (pid==14){
+            System.out.println(driverCandidate.size());
+        }
+
         int did= driverCandidate.get(pid);
         driverCandidate.remove(pid);
         return did;

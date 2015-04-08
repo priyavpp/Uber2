@@ -64,8 +64,8 @@ public class Passenger {
         this.cost=0;
         this.dispatcher=dispatcher;
         dispatcher.add_passenger(pid,start_coords[0],start_coords[1]);
-        System.out.println("Passenger " + pid + " start at " + start_coords[0] + "," + start_coords[1]);
-        System.out.println("Passenger "+pid+" tries to go to "+end_coords[0]+","+end_coords[1]);
+        // System.out.println("Passenger " + pid + " start at " + start_coords[0] + "," + start_coords[1]);
+        // System.out.println("Passenger "+pid+" tries to go to "+end_coords[0]+","+end_coords[1]);
 
         this.logic=logic;
 	}
