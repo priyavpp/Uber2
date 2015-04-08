@@ -156,8 +156,8 @@ public class SimWorld implements SimEventHandler {
         for (int i=0;i<n_drivers;i++){
             Driver d =drivers[i];
             if (d.isActive() && !d.isOnService())
-                if (d.decide_rest()) d.become_inactive();
-            if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator);
+                if (d.decide_rest()) d.become_inactive(currentTime);
+            if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator, currentTime);
         }
         scheduler.scheduleEvent(currentTime + interCheckTime, "driver_check", new ArrayList<String>());
 	}
@@ -223,7 +223,11 @@ public class SimWorld implements SimEventHandler {
 			writer.append(',');
 			writer.append("Working Hours");
 			writer.append(',');
-			writer.append("idleTime");
+			writer.append("Total Working Hours");
+			writer.append(',');
+			writer.append("Total idleTime");
+			writer.append(',');
+			writer.append(("Total Active Hour"));
 			writer.append(',');
 			writer.append("Revenus");
 			writer.append('\n');
@@ -240,9 +244,14 @@ public class SimWorld implements SimEventHandler {
 				writer.append(',');
 				writer.append(Double.toString(d.getHours_working()));
 				writer.append(',');
-				writer.append(Double.toString(d.getIdleTime()));
+				writer.append(Double.toString(d.getTotalWorkingHour()));
+				writer.append(',');
+				writer.append(Double.toString(d.getTotalIdleHour()));
+				writer.append(',');
+				writer.append(Double.toString((d.getTotalActiveHour())));
 				writer.append(',');
 				writer.append(Double.toString((d.getRevenue())));
+				writer.append('\n');
 			}
 			writer.flush();
 			writer.close();
@@ -299,7 +308,7 @@ public class SimWorld implements SimEventHandler {
         SimWorld sim = new SimWorld();  //Create new simulation
         int Simtime=60;         		//Simulation Time (sec).
         int n_grid = 10;        		//N by N district
-        int n_drivers = 10;    		    //Number of drivers
+        int n_drivers = 100;    		//Number of drivers
         int averPassenger = 100; 		//Average number of passenger in one minute(person/min)
 		sim.initialize(n_drivers, averPassenger, n_grid);
 		sim.runSimulation(Simtime);
