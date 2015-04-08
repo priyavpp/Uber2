@@ -27,13 +27,13 @@ public class Driver {
     public Driver(int did, Dispatcher dispatcher, DriverLogic logic) {
         id = did;
         onService = false;
+        active = false;
         idleTime = 0;
         this.dispatcher = dispatcher;
         dispatcher.add_driver(id, -1, -1);
         hours_working = 0;
         revenue = 0;
         this.logic = logic;
-
     }
 
     public boolean isOnService() {
@@ -61,11 +61,11 @@ public class Driver {
     }
     
     public void offservice(){
-    	onService=false;
+        onService=false;
     }
 
     public void on_service() {
-    	//For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
+        //For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
         onService = true;
         dispatcher.remove_driver(id);
     }
