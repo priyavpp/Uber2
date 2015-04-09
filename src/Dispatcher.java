@@ -6,7 +6,16 @@ import java.util.HashMap;
  */
 public class Dispatcher {
     class Coordinate{
+        public int getX() {
+            return x;
+        }
+
         private final int x;
+
+        public int getY() {
+            return y;
+        }
+
         private final int y;
 
         Coordinate(){
@@ -50,6 +59,10 @@ public class Dispatcher {
     }
     //maps passenger id to passenger position;
     private HashMap<Integer,Coordinate> passengerPostion;
+
+    public HashMap<Integer, Coordinate> getDriverPostion() {
+        return driverPostion;
+    }
 
     //maps driver id to passenger position;
     private HashMap<Integer,Coordinate> driverPostion;

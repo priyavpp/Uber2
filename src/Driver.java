@@ -9,21 +9,39 @@ import java.util.Random;
 //For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
 
 public class Driver {
-	//Data collection
-	private double TotalWorkingHour;
-	private double TotalActiveHour;
-	private double TotalIdleHour;
-	private double revenue;
-	
-	private double ActiveStartTime; //Only record the latest activate time
-	
+    public double getTotalWorkingHour() {
+        return TotalWorkingHour;
+    }
+
+    //Data collection
+    private double TotalWorkingHour;
+
+    public double getTotalActiveHour() {
+        return TotalActiveHour;
+    }
+
+    private double TotalActiveHour;
+
+    public double getTotalIdleHour() {
+        return TotalIdleHour;
+    }
+
+    private double TotalIdleHour;
+    private double revenue;
+
+    private double ActiveStartTime; //Only record the latest activate time
+
+    public int getId() {
+        return id;
+    }
+
     private int id;
     //private double minimumSurge;
     private boolean onService;
     private boolean active;
     private double hours_working;
 
-   
+
 
     Dispatcher dispatcher;
     double rest_preference; //driver's preference to work
@@ -39,7 +57,7 @@ public class Driver {
         hours_working = 0;
         revenue = 0;
         this.logic = logic;
-        
+
         TotalWorkingHour = 0;
         TotalActiveHour = 0;
         TotalIdleHour = 0;
@@ -48,7 +66,7 @@ public class Driver {
     public boolean isOnService() {
         return onService;
     }
-    
+
     public boolean isActive() {
         return active;
     }
@@ -70,7 +88,7 @@ public class Driver {
         ActiveStartTime = currentTime;
         System.out.println("Driver " + id + " added on (" + coords[0] + ", " + coords[1] + ")");
     }
-    
+
     public void offservice(){
         onService=false;
     }
@@ -82,16 +100,16 @@ public class Driver {
     }
 
     public void become_inactive(double currentTime) {
-    	TotalActiveHour += (currentTime - ActiveStartTime);
-    	TotalWorkingHour += hours_working;
-    	TotalIdleHour = TotalActiveHour - TotalWorkingHour;
-    	
+        TotalActiveHour += (currentTime - ActiveStartTime);
+        TotalWorkingHour += hours_working;
+        TotalIdleHour = TotalActiveHour - TotalWorkingHour;
+
         active = false;
         onService = false;
         hours_working = 0;
         dispatcher.remove_driver(id);
     }
-    
+
     public boolean decide_work() {
         double revenue_estimate = dispatcher.getRevenueEstimate();
         return logic.decideWork(revenue_estimate);
