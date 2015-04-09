@@ -63,8 +63,7 @@ public class Dispatcher {
     public HashMap<Integer, Coordinate> getDriverPostion() {
         return driverPostion;
     }
-
-    //maps driver id to passenger position;
+    //maps driver id to driver position;
     private HashMap<Integer,Coordinate> driverPostion;
 
     //stores the driver candidate for each passenger request
@@ -74,6 +73,8 @@ public class Dispatcher {
 
     private double surge_price;
     private int n_grid;
+    private double unitTime = 2*60.0; //for one grid distance
+    double averSpeed = 40.0/3600.0; //unit: miles/s
 
     Dispatcher(){
         passengerPostion=new HashMap<Integer, Coordinate>();
@@ -90,7 +91,7 @@ public class Dispatcher {
 
     public void add_passenger(int pid, int x, int y){
         passengerPostion.put(pid,new Coordinate(x,y));
-        //don't need mapDetail.get(new Coordinate(x,y)).passengers.add(pid)?
+        mapDetail.get(new Coordinate(x,y)).passengers.add(pid);
     }
     
     public void initialize_map(int n){
@@ -110,8 +111,8 @@ public class Dispatcher {
     }
 
     // need to be modified
-    public double getRevenueEstimate(){
-        return surge_price*100;
+    public double getSurge(){
+        return surge_price;
     }
   
     public void update_driver_position(int id,int newX,int newY){
@@ -125,8 +126,8 @@ public class Dispatcher {
     public void remove_driver(int id){
         Coordinate coords = driverPostion.get(id);
         mapDetail.get(coords).drivers.remove(new Integer(id));
-
         driverPostion.put(id,new Coordinate(-1,-1));
+        mapDetail.get(new Coordinate(-1,-1)).drivers.add(new Integer(id));
     }
 
     // find the nearest driver, update driver candidates and return eta
@@ -153,8 +154,8 @@ public class Dispatcher {
             if (g.drivers.size()>0){
                 System.out.println("Assigned candidate driver "+g.drivers.get(0)+" to passenger "+pid);
                 driverCandidate.put(pid, g.drivers.get(0));
-                //assuming each grid takes exact 1 min to travel
-                return Math.abs(g.coords.x-current_grid.coords.x)+Math.abs(g.coords.y-current_grid.coords.y);
+                //assuming each grid takes exact 2 min to travel
+                return unitTime + unitTime*Math.abs(g.coords.x-current_grid.coords.x)+Math.abs(g.coords.y-current_grid.coords.y);
             } else{
                 for(int i = 0;i<4;i++){
                     int newX = coordinate.x+dx[i];
@@ -167,15 +168,10 @@ public class Dispatcher {
 
             }
         }
-
         return -1;
     }
 
     public int assign_driver(int pid){
-        if (pid==14){
-            System.out.println(driverCandidate.size());
-        }
-
         int did= driverCandidate.get(pid);
         driverCandidate.remove(pid);
         return did;
@@ -190,7 +186,7 @@ public class Dispatcher {
 //    	    $1 safe ride
 //		     assume 40 mph is the average speed
 
-        double basicPrice= 1.15+0.16*travel_distance/40+0.95*travel_distance+1;
+        double basicPrice= 1.15+0.16*travel_distance/40.0*60.0+0.95*travel_distance+1;
         return surge_price*basicPrice;
     }
     

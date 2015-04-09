@@ -9,67 +9,64 @@ import java.util.Random;
 //For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
 
 public class Driver {
-    public double getTotalWorkingHour() {
-        return TotalWorkingHour;
-    }
-
+    
     //Data collection
-    private double TotalWorkingHour;
-
-    public double getTotalActiveHour() {
-        return TotalActiveHour;
-    }
-
+    private double TotalServiceHour;
     private double TotalActiveHour;
-
-    public double getTotalIdleHour() {
-        return TotalIdleHour;
-    }
-
-    private double TotalIdleHour;
-    private double revenue;
-
+    private double TotalRevenue;
+    
     private double ActiveStartTime; //Only record the latest activate time
-
-    public int getId() {
-        return id;
-    }
+    private double ServiceStartTime; //Only record the latest onservice time
 
     private int id;
+    public int getId() {return id;}
+    
     //private double minimumSurge;
     private boolean onService;
     private boolean active;
-    private double hours_working;
-
-
-
+    
     Dispatcher dispatcher;
     double rest_preference; //driver's preference to work
     DriverLogic logic;
-
-
+    
     public Driver(int did, Dispatcher dispatcher, DriverLogic logic) {
         id = did;
         onService = false;
         active = false;
         this.dispatcher = dispatcher;
         dispatcher.add_driver(id, -1, -1);
-        hours_working = 0;
-        revenue = 0;
+        TotalRevenue = 0;
         this.logic = logic;
 
-        TotalWorkingHour = 0;
+        TotalServiceHour = 0;
         TotalActiveHour = 0;
-        TotalIdleHour = 0;
     }
 
-    public boolean isOnService() {
-        return onService;
+    public double getTotalServiceHour(double currentTime)
+    {
+    	if (this.isOnService())
+           return this.TotalServiceHour + currentTime - this.ServiceStartTime;
+    	else
+    	   return TotalServiceHour;
     }
-
-    public boolean isActive() {
-        return active;
+    
+    public double getTotalActiveHour(double currentTime)
+    {
+    	if (this.isActive())
+    		return this.TotalActiveHour + currentTime - this.ActiveStartTime;
+    	else
+    		return TotalActiveHour;
+  	}
+    
+    public double getTotalIdleHour(double currentTime)
+    {
+    	return this.getTotalActiveHour(currentTime) - this.getTotalServiceHour(currentTime);
     }
+    
+    public double getTotalRevenue(){return this.TotalRevenue;}
+    
+    public boolean isOnService(){return onService;}
+    public boolean isActive(){return active;}
 
 
     public void become_active(double currentTime){
@@ -93,47 +90,41 @@ public class Driver {
         onService=false;
     }
 
-    public void on_service() {
+    public void on_service(double currentTime) {
         //For on_service(), record the corresponding start time and collect the free time and working time based on the recording.
         onService = true;
+        this.ServiceStartTime = currentTime;
         dispatcher.remove_driver(id);
     }
 
     public void become_inactive(double currentTime) {
         TotalActiveHour += (currentTime - ActiveStartTime);
-        TotalWorkingHour += hours_working;
-        TotalIdleHour = TotalActiveHour - TotalWorkingHour;
-
         active = false;
         onService = false;
-        hours_working = 0;
         dispatcher.remove_driver(id);
     }
 
     public boolean decide_work() {
-        double revenue_estimate = dispatcher.getRevenueEstimate();
-        return logic.decideWork(revenue_estimate);
+        double surge = dispatcher.getSurge();
+        return logic.decideWork(surge);//=========Based on SURGE, need modification ====/
     }
 
-    public boolean decide_rest() {
-        return logic.decideRest(hours_working, rest_preference, revenue);
-
+    public boolean decide_rest(double currentTime) {
+        return logic.decideRest(currentTime - ActiveStartTime, rest_preference, TotalRevenue);
     }
 
     public void addRevenue(double revenue) {
-        this.revenue += revenue;
+        this.TotalRevenue += revenue;
     }
 
-    public double getRevenue() {
-        return this.revenue;
+    public void addServiceHour(double time) {
+        this.TotalServiceHour += time;
     }
-
-    public void addHours_working(double time) {
-        this.hours_working += time;
+    
+    public double getPresentActiveHour(double currentTime){
+    	if (this.isActive())
+    		return currentTime - this.ActiveStartTime;
+    	else
+    		return 0;
     }
-
-    public double getHours_working() {
-        return this.hours_working;
-    }
-
 }

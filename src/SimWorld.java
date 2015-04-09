@@ -29,6 +29,9 @@ import java.util.Arrays;
  * 6.Need recording the onRoadTime to get the EmptyCar Time by onRoadTime - WorkingTime
  */
 
+/*
+ * Assume the unit distance between two adjacent grid is one mile!!
+ */
 public class SimWorld implements SimEventHandler {
 	// class variables: dispatcher and list of drivers and passengers
 	SimulationEngine scheduler;
@@ -110,6 +113,7 @@ public class SimWorld implements SimEventHandler {
         Passenger p = passengers.get(pid);
 		double cost=dispatcher.get_price(p);
         double eta=dispatcher.get_eta(pid);
+        
 		if (eta==-1){
 			System.out.println("No Driver available.");
 			return;
@@ -127,9 +131,9 @@ public class SimWorld implements SimEventHandler {
 	public void request(int pid) {
         double currentTime=scheduler.getTime();
         int did = dispatcher.assign_driver(pid);
-        drivers[did].on_service(); 
+        drivers[did].on_service(currentTime); 
         Passenger p = passengers.get(pid);
-		scheduler.scheduleEvent(currentTime+p.getTravelDistance()/averSpeed, "drop_off", new ArrayList<String>(Arrays.asList(pid+"",did+"")));
+		scheduler.scheduleEvent(currentTime+p.getWaitingTime() + p.getTravelDistance()/averSpeed, "drop_off", new ArrayList<String>(Arrays.asList(pid+"",did+"")));
         System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" requested a car");
 	}
 
@@ -138,13 +142,14 @@ public class SimWorld implements SimEventHandler {
         System.out.println("time "+ Helper.round(currentTime,1)+": passenger "+pid+" was dropped off.");
         Passenger p = passengers.get(pid);
 		p.setDropOffTime(currentTime);
+		
         int[] coords = p.getDestination();
         Driver d= drivers[did];
-		d.addHours_working(p.getDropOffTime()-p.getArrivalTime());
+		d.addServiceHour(p.getDropOffTime()-p.getArrivalTime()+p.getWaitingTime());
         d.addRevenue(p.getCost());
         totalRevenue+=p.getCost();
 		dispatcher.update_driver_position(did, coords[0], coords[1]);
-		drivers[did].offservice(); //
+		drivers[did].offservice(); 
     }
 
     public void driver_check() {
@@ -156,7 +161,7 @@ public class SimWorld implements SimEventHandler {
         for (int i=0;i<n_drivers;i++){
             Driver d =drivers[i];
             if (d.isActive() && !d.isOnService())
-                if (d.decide_rest()) d.become_inactive(currentTime);
+                if (d.decide_rest(currentTime)) d.become_inactive(currentTime);
             if (!d.isActive()) if(d.decide_work()) d.become_active(mapGenerator, currentTime);
         }
         scheduler.scheduleEvent(currentTime + interCheckTime, "driver_check", new ArrayList<String>());
@@ -242,15 +247,15 @@ public class SimWorld implements SimEventHandler {
 				writer.append(',');
 				writer.append(Boolean.toString(d.isActive()));
 				writer.append(',');
-				writer.append(Double.toString(d.getHours_working()));
+				writer.append(Double.toString(d.getPresentActiveHour(currentTime)));
 				writer.append(',');
-				writer.append(Double.toString(d.getTotalWorkingHour()));
+				writer.append(Double.toString(d.getTotalServiceHour(currentTime)));
 				writer.append(',');
-				writer.append(Double.toString(d.getTotalIdleHour()));
+				writer.append(Double.toString(d.getTotalIdleHour(currentTime)));
 				writer.append(',');
-				writer.append(Double.toString((d.getTotalActiveHour())));
+				writer.append(Double.toString((d.getTotalActiveHour(currentTime))));
 				writer.append(',');
-				writer.append(Double.toString((d.getRevenue())));
+				writer.append(Double.toString((d.getTotalRevenue())));
 				writer.append('\n');
 			}
 			writer.flush();
@@ -306,10 +311,10 @@ public class SimWorld implements SimEventHandler {
 	public static void main(String[] args) {
 		// main program
         SimWorld sim = new SimWorld();  //Create new simulation
-        double Simtime = 60.0;         		//Simulation Time (sec).
+        double Simtime = 6000.0;         		//Simulation Time (sec).
         int n_grid = 10;        		//N by N district
-        int n_drivers = 70;    		//Number of drivers
-        int averPassenger = 100; 		//Average number of passenger in one minute(person/min)
+        int n_drivers = 200;    		//Number of drivers
+        int averPassenger = 30; 		//Average number of passenger in one minute(person/min)
 		sim.initialize(n_drivers, averPassenger, n_grid);
 		sim.runSimulation(Simtime);
 	}
