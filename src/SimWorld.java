@@ -192,16 +192,16 @@ public class SimWorld implements SimEventHandler {
 
 	}
 
-	public void runSimulation(int t) {
+	public void runSimulation(double t) {
 		scheduler.runSimulation(t);
 	}
 
 	public static void main(String[] args) {
 		// main program
         SimWorld sim = new SimWorld();  //Create new simulation
-        int Simtime = 60;         		//Simulation Time (sec).
+        double Simtime = 60.0;         		//Simulation Time (sec).
         int n_grid = 10;        		//N by N district
-        int n_drivers = 100;    		//Number of drivers
+        int n_drivers = 70;    		//Number of drivers
         int averPassenger = 100; 		//Average number of passenger in one minute(person/min)
 		sim.initialize(n_drivers, averPassenger, n_grid);
 		sim.runSimulation(Simtime);
