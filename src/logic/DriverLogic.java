@@ -16,7 +16,7 @@ public class DriverLogic extends Logic {
         addAlternative("work");
         addAlternative("rest");
     }
-
+    //not useed
     public void setRestPreference(long seed, double mean, double std){
         rest_preference_dist = new RandomNumber(seed,mean,std);
     }

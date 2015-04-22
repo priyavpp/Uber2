@@ -16,6 +16,11 @@ public class Driver {
     private double TotalRevenue;
     
     private double ActiveStartTime; //Only record the latest activate time
+
+    public double getServiceStartTime() {
+        return ServiceStartTime;
+    }
+
     private double ServiceStartTime; //Only record the latest onservice time
 
     private int id;
@@ -34,7 +39,7 @@ public class Driver {
         onService = false;
         active = false;
         this.dispatcher = dispatcher;
-        dispatcher.add_driver(id, -1, -1);
+        dispatcher.add_driver(id, -1, -1); //position determination
         TotalRevenue = 0;
         this.logic = logic;
 
@@ -44,9 +49,10 @@ public class Driver {
 
     public double getTotalServiceHour(double currentTime)
     {
-    	if (this.isOnService())
-           return this.TotalServiceHour + currentTime - this.ServiceStartTime;
-    	else
+    	if (this.isOnService()) {
+//            System.out.println("The current Time ");
+            return this.TotalServiceHour + currentTime - this.ServiceStartTime;
+        } else
     	   return TotalServiceHour;
     }
     
@@ -68,7 +74,7 @@ public class Driver {
     public boolean isOnService(){return onService;}
     public boolean isActive(){return active;}
 
-
+    // this is never used and the function is repeated
     public void become_active(double currentTime){
         active = true;
         onService = false;

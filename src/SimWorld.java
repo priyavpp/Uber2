@@ -235,6 +235,8 @@ public class SimWorld implements SimEventHandler {
 			writer.append(("Total Active Hour"));
 			writer.append(',');
 			writer.append("Revenus");
+			writer.append(',');
+			writer.append("The  Service Start Time");
 			writer.append('\n');
 			for( Driver d : drivers){
 				writer.append(String.valueOf(d.getId()));
@@ -254,6 +256,8 @@ public class SimWorld implements SimEventHandler {
 				writer.append(Double.toString(d.getTotalIdleHour(currentTime)));
 				writer.append(',');
 				writer.append(Double.toString((d.getTotalActiveHour(currentTime))));
+				writer.append(',');
+				writer.append((Double.toString(d.getServiceStartTime())));
 				writer.append(',');
 				writer.append(Double.toString((d.getTotalRevenue())));
 				writer.append('\n');
@@ -311,7 +315,7 @@ public class SimWorld implements SimEventHandler {
 	public static void main(String[] args) {
 		// main program
         SimWorld sim = new SimWorld();  //Create new simulation
-        double Simtime = 6000.0;         		//Simulation Time (sec).
+        double Simtime = 6500.0;         		//Simulation Time (sec).
         int n_grid = 10;        		//N by N district
         int n_drivers = 200;    		//Number of drivers
         int averPassenger = 30; 		//Average number of passenger in one minute(person/min)
